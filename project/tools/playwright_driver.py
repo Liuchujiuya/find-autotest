@@ -1,7 +1,7 @@
 import time  # 用于等待真正的插件 service worker 出现。
 from pathlib import Path  # 路径工具，用于解析插件目录和浏览器用户数据目录。
 
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError, sync_playwright  # Playwright 同步 API，用于启动带插件的 Chromium。
+from playwright.sync_api import Error as PlaywrightError, TimeoutError as PlaywrightTimeoutError, sync_playwright  # Playwright 同步 API，用于启动带插件的 Chromium。
 
 
 def find_extension_dir(extension_root: str | Path = "extension") -> Path:
@@ -24,7 +24,7 @@ def launch_chromium_with_extension(
     """启动加载 findai 插件的 Chromium 持久化上下文。"""
     extension_path = str(Path(extension_dir).resolve() if extension_dir else find_extension_dir())  # 解析插件绝对路径。
     playwright = sync_playwright().start()  # 启动 Playwright 驱动进程。
-    context = playwright.chromium.launch_persistent_context(
+    launch_options = dict(
         user_data_dir=str(Path(user_data_dir).resolve()),  # 使用持久化用户目录保存平台和插件登录态。
         headless=headless,  # 插件调试通常需要有头模式，默认 False。
         no_viewport=True,  # 不使用 Playwright 默认固定视口，让浏览器窗口真实最大化后页面也占满窗口。
@@ -34,6 +34,14 @@ def launch_chromium_with_extension(
             f"--load-extension={extension_path}",  # 加载解压后的 findai 插件目录。
         ],
     )
+    try:
+        context = playwright.chromium.launch_persistent_context(channel="chrome", **launch_options)
+    except PlaywrightError as error:
+        playwright.stop()
+        raise RuntimeError(
+            "Google Chrome is required to run Find Autotest. Install Chrome, then retry. "
+            "Use the release build with -IncludePlaywrightBrowser only when a bundled browser is required."
+        ) from error
     return playwright, context  # 返回 Playwright 实例和浏览器上下文，调用方负责关闭。
 
 

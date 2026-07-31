@@ -1,6 +1,6 @@
 # find-autotest
 
-Windows CLI for FindAI automated tests. Users need neither Git nor Python.
+Windows CLI for FindAI automated tests. Users need neither Git nor Python; Google Chrome must be installed.
 
 ## Install
 
@@ -39,3 +39,5 @@ powershell -ExecutionPolicy Bypass -File .\packaging\build_exe.ps1
 ```
 
 Upload `dist-release\find-autotest-windows.zip` to a GitHub Release. The installer downloads that release asset.
+
+The default build uses the user's installed Google Chrome and keeps the ZIP small. Use `-IncludePlaywrightBrowser` only for a fully bundled browser build; it adds roughly 500 MB.

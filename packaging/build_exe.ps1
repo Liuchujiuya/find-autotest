@@ -1,6 +1,6 @@
 param(
     [string]$Python = "python",
-    [switch]$SkipBrowserInstall
+    [switch]$IncludePlaywrightBrowser
 )
 
 $ErrorActionPreference = "Stop"
@@ -15,7 +15,7 @@ Set-Location $root
 & $Python -m pip install -r (Join-Path $root "project\requirements.txt")
 & $Python -m pip install pyinstaller openpyxl
 
-if (-not $SkipBrowserInstall) {
+if ($IncludePlaywrightBrowser) {
     & $Python -m playwright install chromium
 }
 
@@ -23,7 +23,7 @@ $addData = @(
     "--add-data", "$root\project;project"
 )
 
-if (Test-Path -LiteralPath $browserPath) {
+if ($IncludePlaywrightBrowser -and (Test-Path -LiteralPath $browserPath)) {
     $addData += @("--add-data", "$browserPath;ms-playwright")
 }
 
