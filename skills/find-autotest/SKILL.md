@@ -22,6 +22,15 @@ When a user specifies platforms, always normalize and open them in this priority
 
 ## Commands
 
+## Mandatory preflight — do this before announcing or starting a test
+
+For every request to run tests, perform these checks first. Do **not** say that testing has started, open browser pages, or run the CLI until all required checks pass.
+
+1. Check `%USERPROFILE%\.find-autotest\extension` for an unpacked plugin, identified by `manifest.json` (a ZIP file alone is not sufficient).
+2. If `manifest.json` is absent, stop and tell the user: `请将待测试插件安装包解压到 %USERPROFILE%\.find-autotest\extension，确保该目录或其一级子目录中包含 manifest.json，然后再开始测试。`
+3. If the requested platforms include 小红书 (`xhs`) or 抖音 (`dy`), read the configured API key before running. If it is blank, stop and ask the user for the shared collect API key; update it with `find-autotest config --collect-api-key "..."` before testing.
+4. Only after these checks pass may the test command be run. These checks apply even when the user asks to run all four platforms.
+
 Before running any live test, check that the FindAI Chrome extension package has been unpacked into `extension/` and that an `extension/manifest.json` file exists. If not, stop and ask the user to unpack the plugin installation package into that folder.
 
 Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
