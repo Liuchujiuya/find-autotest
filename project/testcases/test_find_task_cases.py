@@ -47,18 +47,29 @@ if PLATFORM_PARALLEL_ENABLED:
 
     def test_find_task_cases_by_platform_parallel(browser_runtime, findai_runtime_context):
         set_title(f"findai 用例按平台并行执行：{platform_display_text(SELECTED_PLATFORMS)}")
-        grouped_cases = group_cases_by_platform(ALL_CASES)
+        logged_in_platforms = set(browser_runtime.get("logged_in_platforms", SELECTED_PLATFORMS))
+        runnable_cases = [case_data for case_data in ALL_CASES if case_data.get("platform") in logged_in_platforms]
+        skipped_cases = [case_data for case_data in ALL_CASES if case_data.get("platform") not in logged_in_platforms]
+        grouped_cases = group_cases_by_platform(runnable_cases)
         attach_json(
             "platform parallel plan",
             {
                 "selected_platforms": SELECTED_PLATFORMS,
                 "selected_platforms_text": platform_display_text(SELECTED_PLATFORMS),
+                "logged_in_platforms": sorted(logged_in_platforms),
+                "platform_login_status": browser_runtime.get("platform_login_status", {}),
+                "skipped_cases_by_login_gate": [
+                    {"id": case_data["id"], "title": case_data["title"], "platform": case_data["platform"]}
+                    for case_data in skipped_cases
+                ],
                 "cases_by_platform": {
                     platform: [case_data["id"] for case_data in cases]
                     for platform, cases in grouped_cases.items()
                 },
             },
         )
+        if not grouped_cases:
+            pytest.skip("No selected platform is logged in. Scan-login platform cases were skipped by login gate.")
 
         errors = {}
         configured_workers = int(os.getenv("FINDAI_PLATFORM_WORKERS", str(len(grouped_cases) or 1)))
@@ -84,8 +95,19 @@ if PLATFORM_PARALLEL_ENABLED:
 else:
 
     @pytest.mark.parametrize("case_data", ALL_CASES, ids=case_id)
-    def test_find_task_case(case_data, find_task_api, findai_runtime_context, case_state):
+    def test_find_task_case(case_data, browser_runtime, findai_runtime_context, case_state):
         set_title(f"{case_data['id']} {case_data['title']}")
+        if case_data.get("platform") not in set(browser_runtime.get("logged_in_platforms", SELECTED_PLATFORMS)):
+            attach_json(
+                "platform login gate skipped",
+                {
+                    "case_id": case_data["id"],
+                    "platform": case_data.get("platform"),
+                    "platform_login_status": browser_runtime.get("platform_login_status", {}),
+                },
+            )
+            pytest.skip(f"{case_data.get('platform')} is not logged in, skip this platform case.")
+        find_task_api = create_thread_find_task_api(browser_runtime)
         with allure.step(f"{case_data['id']} {case_data['title']}"):
             execute_find_task_case(case_data, find_task_api, findai_runtime_context, case_state)
 

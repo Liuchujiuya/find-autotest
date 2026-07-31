@@ -150,15 +150,24 @@ class PlatformLogin:
 
     def _looks_scan_platform_logged_in(self, platform_name: str) -> bool:
         """粗略判断小红书/抖音官网是否已经登录。"""
-        if platform_name == "xiaohongshu":
-            login_count = self._safe_count('text=登录')  # 小红书未登录通常有登录入口。
-            avatar_count = self._scan_logged_in_marker_count()  # 登录后常见头像/我的入口。
-            return login_count == 0 or avatar_count > 0  # 没有登录入口或出现头像/我的入口时认为已登录。
-        if platform_name == "douyin":
-            login_count = self._safe_count('text=登录') + self._safe_count('text=登录/注册')  # 抖音未登录入口。
-            avatar_count = self._scan_logged_in_marker_count()  # 登录后常见头像/我的入口。
-            return login_count == 0 or avatar_count > 0  # 没有登录入口或出现头像/我的入口时认为已登录。
+        if platform_name in SCAN_LOGIN_PLATFORMS:
+            return not self._scan_login_button_exists(platform_name)  # 登录文本按钮仍可见时视为未登录；不可见时才执行对应平台用例。
         return False  # 未知扫码平台默认视为未登录。
+
+    def _scan_login_button_exists(self, platform_name: str) -> bool:
+        """检查扫码平台页面上是否还有可见的登录文本按钮。"""
+        selectors = [
+            'text=登录',
+            'button:has-text("登录")',
+            '[role="button"]:has-text("登录")',
+        ]
+        if platform_name == "douyin":
+            selectors.extend([
+                'text=登录/注册',
+                'button:has-text("登录/注册")',
+                '[role="button"]:has-text("登录/注册")',
+            ])
+        return any(self._safe_visible_count(selector) > 0 for selector in selectors)
 
     def _scan_logged_in_marker_count(self) -> int:
         """统计扫码平台登录后常见的头像/我的入口，避免混用 CSS 和 text 选择器。"""
@@ -178,14 +187,30 @@ class PlatformLogin:
         except Exception:
             return 0  # 第三方页面结构变化或选择器不兼容时不阻塞测试前置流程。
 
+    def _safe_visible_count(self, selector: str) -> int:
+        """安全统计可见元素数量，避免隐藏登录模板误判未登录。"""
+        try:
+            locator = self.page.locator(selector)
+            count = locator.count()
+            visible_count = 0
+            for index in range(min(count, 20)):
+                try:
+                    if locator.nth(index).is_visible():
+                        visible_count += 1
+                except Exception:
+                    continue
+            return visible_count
+        except Exception:
+            return 0
+
     def _wait_scan_login_success(self, platform_name: str, wait_manual_seconds: int) -> bool:
-        """等待小红书/抖音人工扫码登录，超时不阻塞接口用例。"""
+        """等待小红书/抖音人工扫码登录，超时后让对应平台用例跳过。"""
         deadline = time.time() + wait_manual_seconds  # 计算扫码等待截止时间。
         while time.time() < deadline:
             self.page.wait_for_timeout(2000)  # 每 2 秒检查一次登录状态。
             if self._looks_scan_platform_logged_in(platform_name):
                 return True  # 检测到登录态后返回成功。
-        return True  # 小红书/抖音不提供 build 必填参数，扫码超时也保持页面并继续执行现有接口用例。
+        return False  # 登录入口仍存在时表示未登录，对应平台用例不执行。
 
     def _open_login_panel(self) -> None:
         """尝试点击页面上的登录入口或账号密码登录入口。"""

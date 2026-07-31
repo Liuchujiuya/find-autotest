@@ -48,13 +48,14 @@ def browser_runtime(login_info, selected_test_platforms):
     user_data_dir = _make_session_user_data_dir()  # 每次测试使用独立浏览器目录，避免账号变化时复用旧状态。
     playwright, context = launch_chromium_with_extension(headless=False, user_data_dir=user_data_dir)  # 启动有头 Chromium 并加载 findai 插件。
     try:
-        platform_pages, extension_page, token_info, base_url = _prepare_logged_browser_context(context, login_info, open_extension_page, selected_test_platforms)  # 按用户指定平台准备浏览器。
-        runtime = _wait_platform_runtime_context(extension_page, selected_test_platforms)  # 等待插件从已登录找号平台页拿到 third_id 和 device_id。
+        platform_pages, extension_page, token_info, base_url, platform_login_status = _prepare_logged_browser_context(context, login_info, open_extension_page, selected_test_platforms)  # 按用户指定平台准备浏览器，并记录登录门禁结果。
+        logged_in_platforms = [platform for platform in selected_test_platforms if platform_login_status.get(platform, True)]  # 未完成扫码登录的小红书/抖音不进入后续用例调度。
+        runtime = _wait_platform_runtime_context(extension_page, logged_in_platforms)  # 等待插件从已登录找号平台页拿到 third_id 和 device_id。
         device_id = runtime.get("device_id") or get_findai_device_id_from_extension(extension_page)  # 获取 build 请求体和请求头共用的设备 ID。
         token_info = _normalize_token_info(get_findai_token_from_extension(extension_page) or token_info)  # 以插件 storage 中最终 token 为准，并兼容纯字符串 token。
         token = _extract_token(token_info)  # 提取 access_token。
         version = get_extension_version(extension_page) or "1.4.3"  # 从插件读取版本号，失败时兜底旧版本号。
-        _assert_runtime_ready(base_url, token, device_id, runtime, selected_test_platforms)  # 在真正执行接口用例前统一校验必要参数。
+        _assert_runtime_ready(base_url, token, device_id, runtime, logged_in_platforms)  # 只校验已登录且会真正执行用例的平台所需参数。
         _persist_runtime(base_url, device_id, token_info, runtime)  # 将本次真实浏览器会话参数写入 login_info.yaml 方便排查。
         yield {
             "playwright": playwright,  # Playwright 驱动对象，主要用于 teardown。
@@ -68,6 +69,8 @@ def browser_runtime(login_info, selected_test_platforms):
             "runtime": runtime,  # 平台 third_id 和 device_id 上下文。
             "collect_api_keys": _collect_api_keys(login_info),  # 小红书/抖音采集接口 API key。
             "selected_platforms": selected_test_platforms,  # 本次用户指定的平台列表。
+            "logged_in_platforms": logged_in_platforms,  # 本次完成登录、允许执行用例的平台列表。
+            "platform_login_status": platform_login_status,  # 每个平台的登录门禁结果，便于报告和调试。
         }
     finally:
         context.close()  # 所有用例结束后才关闭浏览器上下文。
@@ -78,7 +81,7 @@ def browser_runtime(login_info, selected_test_platforms):
 def findai_client(browser_runtime):
     """会话级 fixture：创建与当前插件浏览器会话一致的接口请求客户端。"""
     token = browser_runtime.get("token")  # 使用当前插件 storage 里的 token。
-    selected_platforms = set(browser_runtime.get("selected_platforms", []))  # 判断本次是否包含找号任务平台。
+    selected_platforms = set(browser_runtime.get("logged_in_platforms", browser_runtime.get("selected_platforms", [])))  # 只按已登录平台判断是否需要找号任务 token。
     if not token and selected_platforms & SMART_TASK_PLATFORMS:
         pytest.skip("findai token is empty after browser plugin login.")  # 插件登录后仍无 token 时跳过接口用例。
     base_url = browser_runtime.get("base_url")  # 使用当前插件脚本里的 base_url。
@@ -135,10 +138,11 @@ def _prepare_logged_browser_context(context, login_info, open_extension_page, se
     """按用户指定平台准备浏览器会话，打开顺序：小红书、抖音、蒲公英、星图。"""
     wait_seconds = _platform_wait_seconds()  # 读取平台登录等待时间，兼容验证码/扫码等人工处理。
     platform_pages = {}  # 保存平台页面对象，直到测试结束都不关闭。
+    platform_login_status = {platform: True for platform in selected_platforms}  # 默认账号密码平台登录成功才会继续，扫码平台会覆盖真实状态。
     if "xhs" in selected_platforms:
-        _open_one_scan_login_platform_page(context, login_info, platform_pages, "xiaohongshu", "小红书")  # 小红书优先打开。
+        platform_login_status["xhs"] = _open_one_scan_login_platform_page(context, login_info, platform_pages, "xiaohongshu", "小红书")  # 小红书优先打开，未登录则跳过小红书用例。
     if "dy" in selected_platforms:
-        _open_one_scan_login_platform_page(context, login_info, platform_pages, "douyin", "抖音")  # 抖音第二打开。
+        platform_login_status["dy"] = _open_one_scan_login_platform_page(context, login_info, platform_pages, "douyin", "抖音")  # 抖音第二打开，未登录则跳过抖音用例。
     if "pgy" in selected_platforms:
         print("[setup] 开始登录蒲公英平台。")  # 输出当前前置流程阶段。
         pgy_page = context.new_page()  # 蒲公英页面，findai 插件浮层会注入到该平台页。
@@ -163,7 +167,7 @@ def _prepare_logged_browser_context(context, login_info, open_extension_page, se
         token_info = _normalize_token_info(_wait_findai_token(extension_page, login_info, base_url))  # 找号任务需要 token。
     else:
         token_info = _normalize_token_info(get_findai_token_from_extension(extension_page))  # 只跑采集任务时 token 可为空。
-    return platform_pages, extension_page, token_info, base_url  # 返回平台页、插件页和 findai 动态参数。
+    return platform_pages, extension_page, token_info, base_url, platform_login_status  # 返回平台页、插件页、findai 动态参数和登录门禁结果。
 
 
 def _open_scan_login_platform_pages(context, login_info, platform_pages: dict) -> None:
@@ -172,15 +176,17 @@ def _open_scan_login_platform_pages(context, login_info, platform_pages: dict) -
     _open_one_scan_login_platform_page(context, login_info, platform_pages, "douyin", "抖音")  # 兼容旧调用。
 
 
-def _open_one_scan_login_platform_page(context, login_info, platform_pages: dict, platform_key: str, platform_label: str) -> None:
+def _open_one_scan_login_platform_page(context, login_info, platform_pages: dict, platform_key: str, platform_label: str) -> bool:
     """打开一个扫码登录平台页面，等待用户扫码登录，但不要求读取 third_id/device_id。"""
     wait_seconds = _scan_login_wait_seconds()  # 读取扫码等待时间。
     print(f"[setup] 开始打开{platform_label}官网，请在浏览器中扫码登录。")  # 控制台提示用户扫码。
     page = context.new_page()  # 每个平台独立页面，保持到测试结束。
     platform_login = PlatformLogin(page, login_info)  # 复用平台登录对象中的扫码登录流程。
-    platform_login.login(platform_key, wait_manual_seconds=wait_seconds)  # 扫码超时不会阻止采集接口用例执行。
+    logged_in = platform_login.login(platform_key, wait_manual_seconds=wait_seconds)  # 返回扫码登录后的真实状态。
     platform_pages[platform_key] = page  # 保存页面对象，避免登录态页面被关闭。
-    print(f"[setup] {platform_label}页面已保持打开。")  # 提示该平台页面已准备。
+    status_text = "已登录，可以执行对应平台用例" if logged_in else "未检测到登录态，对应平台用例将跳过"
+    print(f"[setup] {platform_label}页面已保持打开，登录检查结果：{status_text}。")  # 提示扫码平台最终门禁结果。
+    return logged_in
 
 
 def _login_findai_from_platform_overlay(page, login_info) -> None:
@@ -296,7 +302,7 @@ def _assert_runtime_ready(base_url: str, token: str, device_id: str, runtime: di
     """确认此时已经满足所选平台用例的执行条件。"""
     platforms = runtime.get("platforms", {}) if isinstance(runtime, dict) else {}  # 读取插件同步出的平台上下文。
     missing = []  # 收集缺失项，便于一次性输出完整原因。
-    if not base_url:
+    if selected_platforms and not base_url:
         missing.append("base_url")  # 缺少接口域名时 build/status 等接口无法请求。
     selected_smart_platforms = set(selected_platforms) & SMART_TASK_PLATFORMS
     if selected_smart_platforms and not token:
