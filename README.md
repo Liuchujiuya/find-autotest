@@ -7,7 +7,7 @@ Windows CLI for FindAI automated tests. Users need neither Git nor Python.
 Download the latest Windows release and install it to `%USERPROFILE%\.find-autotest`:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/Liuchujiuya/find-autotest/main/install.ps1 | iex"
+$installer = Join-Path $env:TEMP 'find-autotest-install.ps1'; Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/Liuchujiuya/find-autotest/main/install.ps1' -OutFile $installer; powershell -NoProfile -ExecutionPolicy Bypass -File $installer
 ```
 
 The GitHub release must include an asset named `find-autotest-windows.zip`. The installed directory contains only:
