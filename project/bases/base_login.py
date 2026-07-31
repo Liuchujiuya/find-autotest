@@ -60,7 +60,12 @@ class PlatformLogin:
         username = account.get("username")  # 平台登录用户名/手机号。
         password = account.get("password")  # 平台登录密码。
         if not username or not password:
-            raise ValueError(f"{platform_name} username/password is empty in login_info.yaml")  # 账号缺失时提前报错。
+            self.page.goto(url, wait_until="domcontentloaded")
+            self.page.wait_for_timeout(2000)
+            if self._looks_logged_in():
+                return True
+            print(f"[setup] {platform_name} username/password is empty; please complete login manually in the opened browser page.")
+            return self._wait_login_success(wait_manual_seconds)
         if platform_name == "pugongying":
             return self._login_pugongying_xhs(url, username, password, wait_manual_seconds)  # 蒲公英使用小红书平台专用登录流程。
         if platform_name == "xingtu":

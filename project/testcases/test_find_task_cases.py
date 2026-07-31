@@ -116,7 +116,18 @@ def group_cases_by_platform(cases: list[dict[str, Any]]) -> dict[str, list[dict[
     grouped: dict[str, list[dict[str, Any]]] = {}
     for case_data in cases:
         grouped.setdefault(case_data["platform"], []).append(case_data)
+    for platform_cases in grouped.values():
+        platform_cases.sort(key=case_id_sort_key)
     return grouped
+
+
+def case_id_sort_key(case_data: dict[str, Any]) -> tuple[str, int, str]:
+    """Sort case IDs naturally, such as pgy-01 before pgy-10."""
+    case_id = str(case_data.get("id") or "")
+    match = re.match(r"^(.*?)-(\d+)$", case_id)
+    if match:
+        return match.group(1), int(match.group(2)), case_id
+    return case_id, 0, case_id
 
 
 def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runtime, findai_runtime_context):
@@ -141,7 +152,8 @@ def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runti
                     errors.append(error_info)
                     print(f"[{platform}] failed {case_data['id']}: {error}")
                     attach_json(f"{platform} {case_data['id']} failure", error_info)
-                    continue
+                    print(f"[{platform}] stop remaining cases: the previous task did not complete successfully.")
+                    break
     return errors
 
 

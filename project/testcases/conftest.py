@@ -212,7 +212,9 @@ def _login_findai_from_platform_overlay(page, login_info) -> None:
     mobile = account.get("username", "")  # findai 手机号。
     password = account.get("password", "")  # findai 密码。
     if not mobile or not password:
-        raise ValueError("findai username/password is empty in login_info.yaml")  # 缺账号密码时提前失败。
+        page.locator(".overlay-container").click(timeout=10000)
+        print("[setup] findai username/password is empty; please complete plugin login manually.")
+        return
     page.locator(".overlay-container").click(timeout=10000)  # 点击 findai 插件浮层。
     page.get_by_role("textbox", name="请输入手机号码").fill(mobile)  # 填写 findai 手机号。
     page.get_by_role("textbox", name="请输入密码").fill(password)  # 填写 findai 密码。
@@ -243,6 +245,9 @@ def _wait_findai_token(extension_page, login_info: dict, base_url: str) -> dict:
         elapsed += 1  # 更新已等待秒数。
     snapshot = get_findai_storage_snapshot(extension_page)  # 超时后读取关键 storage，便于判断是否写到其他 key。
     print(f"[setup] 插件 storage 暂未读取到 USER_TOKEN，尝试通过 findai 登录接口兜底。storage={snapshot}")  # 输出诊断信息但不泄露完整 token。
+    account = login_info.get("findai", {})
+    if not account.get("username") or not account.get("password"):
+        raise RuntimeError("FindAI plugin login was not completed manually, and no username/password is configured for automatic login.")
     if not base_url:
         raise RuntimeError(f"Findai plugin login did not create USER_TOKEN in extension storage, and base_url is empty. Storage snapshot: {snapshot}")  # 没有域名时无法兜底登录。
     return FindaiLogin(
