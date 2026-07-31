@@ -22,6 +22,7 @@ from tools.request_client import RequestClient
 ALL_CASES = []
 SELECTED_PLATFORMS = selected_platforms_from_env()
 PLATFORM_PARALLEL_ENABLED = os.getenv("FINDAI_PLATFORM_PARALLEL", "0").strip() == "1"
+COLLECT_TASK_PLATFORMS = {"xhs", "dy"}  # 采集任务彼此独立，可在同一平台内并发创建。
 
 
 def load_cases() -> list[dict[str, Any]]:
@@ -131,6 +132,9 @@ def case_id_sort_key(case_data: dict[str, Any]) -> tuple[str, int, str]:
 
 
 def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runtime, findai_runtime_context):
+    if platform in COLLECT_TASK_PLATFORMS:
+        return run_collect_platform_cases(platform, cases, browser_runtime, findai_runtime_context)
+
     case_state = {"variables": {}, "results": {}}
     thread_api = create_thread_find_task_api(browser_runtime)
     errors = []
@@ -161,6 +165,45 @@ def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runti
                 finally:
                     case_state.pop("_result_assertion_phase", None)
     return errors
+
+
+def run_collect_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runtime, findai_runtime_context):
+    """并发执行同一采集平台的独立用例，使全部采集任务尽快创建。"""
+    errors = []
+    workers = max(1, min(len(cases), int(os.getenv("FINDAI_COLLECT_CASE_WORKERS", str(len(cases) or 1)))))
+    with allure.step(f"{platform} 平台并发创建并执行 {len(cases)} 条采集用例"):
+        print(f"[{platform}] submit all {len(cases)} collect cases for concurrent task creation.")
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix=f"findai-{platform}-collect") as executor:
+            futures = {
+                executor.submit(run_one_collect_case, case_data, browser_runtime, findai_runtime_context): case_data
+                for case_data in cases
+            }
+            for future in as_completed(futures):
+                case_data = futures[future]
+                try:
+                    future.result()
+                    print(f"[{platform}] passed {case_data['id']}")
+                except BaseException as error:
+                    if isinstance(error, (KeyboardInterrupt, SystemExit)):
+                        raise
+                    error_info = {
+                        "case_id": case_data["id"],
+                        "title": case_data["title"],
+                        "traceback": "".join(traceback.format_exception(type(error), error, error.__traceback__)),
+                    }
+                    errors.append(error_info)
+                    print(f"[{platform}] failed {case_data['id']}: {error}")
+                    attach_json(f"{platform} {case_data['id']} failure", error_info)
+    return errors
+
+
+def run_one_collect_case(case_data: dict[str, Any], browser_runtime, findai_runtime_context) -> None:
+    """执行一个采集用例；每个线程使用独立 API 客户端和状态，避免并发共享数据。"""
+    case_state = {"variables": {}, "results": {}, "_result_assertion_phase": False}
+    find_task_api = create_thread_find_task_api(browser_runtime)
+    with allure.step(f"{case_data['id']} {case_data['title']}"):
+        print(f"[{case_data['platform']}] start {case_data['id']} {case_data['title']}")
+        execute_find_task_case(case_data, find_task_api, findai_runtime_context, case_state)
 
 
 def format_platform_failures(errors: dict[str, list[dict[str, str]]]) -> str:
