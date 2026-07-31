@@ -1,5 +1,5 @@
 param(
-    [string]$RepoUrl = "",
+    [string]$RepoUrl = "https://github.com/Liuchujiuya/find-autotest.git",
     [string]$Ref = "main",
     [string]$ProjectDir = "D:\apitest_dev",
     [string]$SkillName = "find-autotest",
@@ -18,10 +18,6 @@ function Resolve-SourceRoot {
     $localRoot = $PSScriptRoot
     if ($localRoot -and (Test-Path -LiteralPath (Join-Path $localRoot "skills\$SkillName")) -and (Test-Path -LiteralPath (Join-Path $localRoot "project"))) {
         return $localRoot
-    }
-
-    if (-not $RepoUrl) {
-        throw "RepoUrl is required when install.ps1 is executed from a remote one-liner. Example: powershell -ExecutionPolicy Bypass -Command `"irm <raw-install.ps1-url> | iex`" -RepoUrl <git-url>"
     }
 
     if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
