@@ -1,5 +1,6 @@
 import os  # 用于读取登录等待时间、浏览器用户目录等运行参数。
 import json  # 用于解析插件 storage 中可能被多包一层的 token/device_id JSON 字符串。
+import threading  # 用于记录浏览器是否被用户手动关闭。
 from pathlib import Path  # 用于创建本次测试会话专属的浏览器用户数据目录。
 from uuid import uuid4  # 用于给每次测试会话生成独立浏览器目录，避免账号变化时复用旧登录态。
 
@@ -47,6 +48,8 @@ def browser_runtime(login_info, selected_test_platforms):
         pytest.skip(f"playwright is not installed: {error}. Run pip install -r requirements.txt and playwright install chromium.")  # 浏览器依赖缺失时给出明确提示。
     user_data_dir = _make_session_user_data_dir()  # 每次测试使用独立浏览器目录，避免账号变化时复用旧状态。
     playwright, context = launch_chromium_with_extension(headless=False, user_data_dir=user_data_dir)  # 启动有头 Chromium 并加载 findai 插件。
+    browser_closed_event = threading.Event()  # 浏览器中途关闭时用于通知接口轮询尽快退出。
+    context.on("close", lambda _: browser_closed_event.set())  # 用户手动关闭浏览器窗口时标记中断。
     try:
         platform_pages, extension_page, token_info, base_url, platform_login_status = _prepare_logged_browser_context(context, login_info, open_extension_page, selected_test_platforms)  # 按用户指定平台准备浏览器，并记录登录门禁结果。
         logged_in_platforms = [platform for platform in selected_test_platforms if platform_login_status.get(platform, True)]  # 未完成扫码登录的小红书/抖音不进入后续用例调度。
@@ -71,6 +74,7 @@ def browser_runtime(login_info, selected_test_platforms):
             "selected_platforms": selected_test_platforms,  # 本次用户指定的平台列表。
             "logged_in_platforms": logged_in_platforms,  # 本次完成登录、允许执行用例的平台列表。
             "platform_login_status": platform_login_status,  # 每个平台的登录门禁结果，便于报告和调试。
+            "browser_closed_event": browser_closed_event,  # 暴露给接口封装，用于浏览器中途关闭时快速失败。
         }
     finally:
         context.close()  # 所有用例结束后才关闭浏览器上下文。
@@ -108,9 +112,13 @@ def findai_runtime_context(browser_runtime):
 
 
 @pytest.fixture(scope="session")
-def find_task_api(findai_client, login_info):
+def find_task_api(findai_client, login_info, browser_runtime):
     """会话级 fixture：创建找号任务 API 业务对象。"""
-    return FindTaskApi(findai_client, collect_api_keys=_collect_api_keys(login_info))  # 注入请求客户端和采集 API key。
+    return FindTaskApi(
+        findai_client,
+        collect_api_keys=_collect_api_keys(login_info),
+        abort_checker=browser_runtime.get("browser_closed_event").is_set,
+    )  # 注入请求客户端、采集 API key 和浏览器关闭检查器。
 
 
 def _collect_api_keys(login_info: dict) -> dict[str, str]:

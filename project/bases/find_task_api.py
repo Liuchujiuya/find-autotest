@@ -10,9 +10,10 @@ from typing import Any  # 用于标注接口响应这类结构不固定的数据
 class FindTaskApi:
     """封装 Excel bases 页定义的找号任务公共接口能力。"""
 
-    def __init__(self, request_client, collect_api_keys: dict[str, str] | None = None):
+    def __init__(self, request_client, collect_api_keys: dict[str, str] | None = None, abort_checker=None):
         self.client = request_client  # 保存统一请求客户端，复用鉴权头、日志和 Allure 附件逻辑。
         self.collect_api_keys = collect_api_keys or {}  # 保存小红书/抖音采集接口 API key，用于 Authorization: key=xxx。
+        self.abort_checker = abort_checker  # 浏览器被手动关闭时用于快速中断长轮询。
 
     def build_task(self, payload: dict[str, Any]) -> dict[str, Any]:
         """创建智能插件任务。"""
@@ -32,7 +33,7 @@ class FindTaskApi:
     ) -> dict[str, Any]:
         """轮询采集任务状态，直到 fdStatus=10 并返回任务记录。"""
         attempts = attempts or int(os.getenv("FINDAI_COLLECT_STATUS_ATTEMPTS", os.getenv("FINDAI_TASK_STATUS_ATTEMPTS", "3")))
-        interval_seconds = interval_seconds or int(os.getenv("FINDAI_COLLECT_POLL_INTERVAL", os.getenv("FINDAI_TASK_POLL_INTERVAL", "300")))
+        interval_seconds = interval_seconds or int(os.getenv("FINDAI_COLLECT_POLL_INTERVAL", "120"))
         headers = self._collect_auth_headers(platform)  # 采集状态接口沿用 API key 请求头。
         last_payload: dict[str, Any] | None = None  # 保存最后一次响应，失败时便于排查。
         for index in range(attempts):
@@ -51,7 +52,7 @@ class FindTaskApi:
                     raise AssertionError(f"Collect task status success but id is empty: {task}")  # 完成状态必须能拿到详情 id。
                 return task  # fdStatus=10 代表采集结束。
             if index < attempts - 1:
-                time.sleep(interval_seconds)  # 未完成时等待下一次轮询。
+                self._sleep_or_abort(interval_seconds)  # 未完成时等待下一次轮询，浏览器关闭时快速失败。
         raise AssertionError(f"Collect task did not reach fdStatus=10 after {attempts} attempts: {last_payload}")  # 超时失败。
 
     def get_collect_task_info(self, task_id: str | int, platform: str) -> list[dict[str, Any]]:
@@ -133,7 +134,7 @@ class FindTaskApi:
                     raise AssertionError(f"Task status success but id is empty: {task}")  # 完成状态下必须有任务 id 才能查明细。
                 return task  # fdStatus=10 代表任务完成，返回任务记录。
             if index < attempts - 1:
-                time.sleep(interval_seconds)  # 未完成且还有重试机会时等待下一轮。
+                self._sleep_or_abort(interval_seconds)  # 未完成且还有重试机会时等待下一轮，浏览器关闭时快速失败。
 
         raise AssertionError(f"Task did not reach fdStatus=10 after {attempts} attempts: {last_payload}")  # 超过最大次数仍未完成则失败。
 
@@ -225,7 +226,7 @@ class FindTaskApi:
                 return last_items
             last_fingerprint = fingerprint
             if index < attempts - 1:
-                time.sleep(interval_seconds)
+                self._sleep_or_abort(interval_seconds)
         raise AssertionError(f"No stable task user data returned after {attempts} attempts: task_id={task_id}, fdNo={fd_no}, last_items={last_items}")
 
     @classmethod
@@ -259,11 +260,25 @@ class FindTaskApi:
         )
     def _post_json(self, endpoint: str, payload: dict[str, Any], headers: dict[str, str] | None = None) -> dict[str, Any]:
         """发送 POST JSON 请求，并校验 HTTP 与业务状态。"""
+        self._raise_if_aborted()  # 浏览器已经被手动关闭时，不再继续创建或查询任务。
         response = self.client.post(endpoint, json=payload, headers=headers)  # 使用统一客户端发送请求并自动写 Allure 附件。
         response.raise_for_status()  # HTTP 非 2xx 时抛出异常。
         data = response.json()  # 将响应体解析为 JSON 字典。
         self.assert_api_success(data)  # 校验业务 code/message 是否成功。
         return data  # 返回通过校验的业务响应。
+
+    def _sleep_or_abort(self, seconds: int) -> None:
+        """分片等待轮询间隔，让浏览器关闭后可以尽快结束测试。"""
+        deadline = time.time() + seconds
+        while time.time() < deadline:
+            self._raise_if_aborted()
+            time.sleep(min(1, max(0, deadline - time.time())))
+        self._raise_if_aborted()
+
+    def _raise_if_aborted(self) -> None:
+        """浏览器被用户关闭时立即让当前用例失败，run.py 会继续生成报告并发送企微通知。"""
+        if self.abort_checker and self.abort_checker():
+            raise AssertionError("Browser was closed during test execution. Stop remaining steps and notify WeCom.")
 
     @staticmethod
     def assert_api_success(data: dict[str, Any]) -> None:

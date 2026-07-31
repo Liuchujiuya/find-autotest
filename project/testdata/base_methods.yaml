@@ -225,7 +225,7 @@ methods:
 
     2.保存该任务的用例ID ，fdName ，fdNo ， id，接口返回结果，后续的用例可能需要解析结果，产生过滤条件'
 - name: get_cjtask_status
-  steps: 调用/api/collectTask/list接口，一共调用3次，每次调用间隔时间：300s。传参中的fdNo字段，为方法：/api/collectTask/buildCollectTask返回的fdNo
+  steps: 调用/api/collectTask/list接口，一共调用3次，每次调用间隔时间：120s。传参中的fdNo字段，为方法：/api/collectTask/buildCollectTask返回的fdNo
   request_example: "{\n    \"fdTaskNo\": ${fdNo},\n    \"limit\": 10,\n    \"pageIndex\": 1,\n    \"sortName\": \"createdDate\",\n    \"sortOrder\"\
     : \"asc\"\n}"
   response_example: "{\n    \"code\": 1,\n    \"message\": \"success\",\n    \"data\": {\n        \"data\": [\n            {\n               \

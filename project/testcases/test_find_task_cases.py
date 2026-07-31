@@ -162,7 +162,11 @@ def create_thread_find_task_api(browser_runtime) -> FindTaskApi:
         "Version": browser_runtime.get("version") or "1.4.3",
     }
     client = RequestClient(base_url=browser_runtime.get("base_url", ""), headers=headers, timeout=30)
-    return FindTaskApi(client, collect_api_keys=browser_runtime.get("collect_api_keys", {}))
+    return FindTaskApi(
+        client,
+        collect_api_keys=browser_runtime.get("collect_api_keys", {}),
+        abort_checker=browser_runtime.get("browser_closed_event").is_set,
+    )
 
 
 def task_info_endpoint(platform: str) -> str:

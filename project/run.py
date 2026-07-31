@@ -92,6 +92,8 @@ def run_command(command: list[str], selected_platforms: list[str] | None = None)
     env.setdefault("FINDAI_PARALLEL_CASES", "0")  # 单个平台内部仍按 Excel 顺序串行执行，避免依赖用例提前执行。
     env.setdefault("FINDAI_CASE_WORKERS", "1")  # 平台内部串行链路只需要 1 个 worker。
     env.setdefault("FINDAI_TASK_POLL_INTERVAL", "10")  # 默认每 10 秒查询一次任务状态，避免 300 秒长时间卡住。
+    env.setdefault("FINDAI_COLLECT_STATUS_ATTEMPTS", "3")  # 采集任务 /api/collectTask/list 默认查询 3 次。
+    env.setdefault("FINDAI_COLLECT_POLL_INTERVAL", "120")  # 采集任务 /api/collectTask/list 每次查询默认间隔 120 秒。
     env.setdefault("FINDAI_TASK_STATUS_ATTEMPTS", "60")  # 默认最多等 10 分钟，兼顾长任务完成时间。
     env.setdefault("FINDAI_TASK_INFO_INTERVAL", "5")  # 任务完成后默认每 5 秒查询一次达人明细。
     env.setdefault("FINDAI_TASK_INFO_ATTEMPTS", "24")  # 任务完成后默认最多等 2 分钟等待明细落库。
