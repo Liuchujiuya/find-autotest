@@ -66,6 +66,38 @@ def has_extension_files(path: Path) -> bool:
     return any(item.name != ".gitkeep" for item in path.iterdir())
 
 
+def has_unpacked_extension(path: Path) -> bool:
+    """Return whether extension contains an unpacked Chrome extension manifest."""
+    return path.is_dir() and any(path.rglob("manifest.json"))
+
+
+def validate_test_prerequisites(platforms: list[str]) -> None:
+    """Fail early with actionable setup guidance before creating real tasks."""
+    extension_dir = external_extension_dir()
+    if not has_unpacked_extension(extension_dir):
+        raise RuntimeError(
+            "FindAI Chrome extension is not unpacked. Extract the plugin package into "
+            f"{extension_dir} so that extension/manifest.json exists."
+        )
+
+    collect_platforms = {"xhs", "dy"}
+    selected_collect = collect_platforms.intersection(platforms)
+    if selected_collect:
+        config = load_yaml(exe_config_path())
+        platform_config = config.get("platforms", {})
+        missing = [
+            platform
+            for platform, config_key in (("xhs", "xiaohongshu"), ("dy", "douyin"))
+            if platform in selected_collect
+            and not str(platform_config.get(config_key, {}).get("api_key") or "").strip()
+        ]
+        if missing:
+            raise RuntimeError(
+                "API key is required before running Xiaohongshu/Douyin tests. Configure it with: "
+                "find-autotest config --collect-api-key \"...\""
+            )
+
+
 def sync_external_extension() -> None:
     source = external_extension_dir()
     destination = PROJECT_DIR / "extension"
@@ -198,6 +230,13 @@ def run_tests(args: argparse.Namespace) -> int:
     ensure_installed()
     sys.path.insert(0, str(PROJECT_DIR))
     os.chdir(PROJECT_DIR)
+    project_run = load_project_run_module()
+    selected_platforms = project_run.normalize_platforms(args.platforms)
+    try:
+        validate_test_prerequisites(selected_platforms)
+    except RuntimeError as error:
+        print(f"Preflight check failed: {error}")
+        return 2
     if args.platforms:
         os.environ["FINDAI_TEST_PLATFORMS"] = args.platforms
     os.environ.setdefault("FINDAI_PLATFORM_PARALLEL", "1")
@@ -214,7 +253,6 @@ def run_tests(args: argparse.Namespace) -> int:
             extra_args = extra_args[1:]
         pytest_args.extend(extra_args)
     pytest_code = int(pytest.main(pytest_args))
-    project_run = load_project_run_module()
     report_code = 0
     report_url = ""
     if not args.no_report:
@@ -224,7 +262,6 @@ def run_tests(args: argparse.Namespace) -> int:
             if report_url:
                 print(f"Allure report server: {report_url}")
     if not args.no_notify:
-        selected_platforms = project_run.normalize_platforms(args.platforms)
         project_run.send_wecom_notification(pytest_code, report_code, report_url, selected_platforms)
     if pytest_code == 0 and report_code != 0:
         return report_code

@@ -22,6 +22,10 @@ When a user specifies platforms, always normalize and open them in this priority
 
 ## Commands
 
+Before running any live test, check that the FindAI Chrome extension package has been unpacked into `extension/` and that an `extension/manifest.json` file exists. If not, stop and ask the user to unpack the plugin installation package into that folder.
+
+Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
+
 Run all platforms:
 
 ```powershell
