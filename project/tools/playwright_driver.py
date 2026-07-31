@@ -42,6 +42,15 @@ def launch_chromium_with_extension(
             "Google Chrome is required to run Find Autotest. Install Chrome, then retry. "
             "Use the release build with -IncludePlaywrightBrowser only when a bundled browser is required."
         ) from error
+    try:
+        get_extension_id(context)
+    except RuntimeError as error:
+        context.close()
+        playwright.stop()
+        raise RuntimeError(
+            f"The test browser did not load the unpacked extension from {extension_path}. "
+            "Verify extension/manifest.json and retry."
+        ) from error
     return playwright, context  # 返回 Playwright 实例和浏览器上下文，调用方负责关闭。
 
 
