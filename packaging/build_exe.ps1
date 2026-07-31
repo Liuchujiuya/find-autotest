@@ -7,16 +7,20 @@ $ErrorActionPreference = "Stop"
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $distRoot = Join-Path $root "dist-release"
 $workRoot = Join-Path $root "build-release"
+$venvRoot = Join-Path $root ".build-venv"
 $browserPath = Join-Path $env:LOCALAPPDATA "ms-playwright"
 
 Set-Location $root
 
-& $Python -m pip install --upgrade pip
-& $Python -m pip install -r (Join-Path $root "project\requirements.txt")
-& $Python -m pip install pyinstaller openpyxl
+if (-not (Test-Path -LiteralPath (Join-Path $venvRoot "Scripts\python.exe"))) {
+    & $Python -m venv $venvRoot
+}
+$buildPython = Join-Path $venvRoot "Scripts\python.exe"
+& $buildPython -m pip install --upgrade pip
+& $buildPython -m pip install -r (Join-Path $root "project\requirements.txt") pyinstaller
 
 if ($IncludePlaywrightBrowser) {
-    & $Python -m playwright install chromium
+    & $buildPython -m playwright install chromium
 }
 
 $addData = @(
@@ -27,7 +31,7 @@ if ($IncludePlaywrightBrowser -and (Test-Path -LiteralPath $browserPath)) {
     $addData += @("--add-data", "$browserPath;ms-playwright")
 }
 
-& $Python -m PyInstaller `
+& $buildPython -m PyInstaller `
     --noconfirm `
     --clean `
     --onefile `

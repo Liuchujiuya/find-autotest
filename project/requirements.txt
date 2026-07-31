@@ -3,4 +3,5 @@ allure-pytest
 playwright
 requests
 PyYAML
+openpyxl
 
