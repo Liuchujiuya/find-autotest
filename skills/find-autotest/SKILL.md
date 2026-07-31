@@ -29,7 +29,8 @@ For every request to run tests, perform these checks first. Do **not** say that 
 1. Check `%USERPROFILE%\.find-autotest\extension` for an unpacked plugin, identified by `manifest.json` (a ZIP file alone is not sufficient).
 2. If `manifest.json` is absent, stop and tell the user: `请将待测试插件安装包解压到 %USERPROFILE%\.find-autotest\extension，确保该目录或其一级子目录中包含 manifest.json，然后再开始测试。`
 3. If the requested platforms include 小红书 (`xhs`) or 抖音 (`dy`), read the configured API key before running. If it is blank, stop and ask the user for the shared collect API key; update it with `find-autotest config --collect-api-key "..."` before testing.
-4. Only after these checks pass may the test command be run. These checks apply even when the user asks to run all four platforms.
+4. Open the selected platform pages in priority order. After all selected platform pages are ready, always open the FindAI plugin login page last and wait until FindAI login has produced a token before running any test case. This applies to every platform selection, including only 小红书 or 抖音.
+5. Only after these checks and the FindAI login complete may the test command be run. These checks apply even when the user asks to run all four platforms.
 
 ## Account configuration
 

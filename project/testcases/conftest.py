@@ -167,9 +167,6 @@ def _prepare_logged_browser_context(context, login_info, open_extension_page, se
         if not pgy_login.login("pugongying", wait_manual_seconds=wait_seconds):
             raise RuntimeError(f"pugongying login was not completed within {wait_seconds} seconds.")  # 蒲公英登录失败时阻止后续蒲公英用例。
         platform_pages["pugongying"] = pgy_page  # 保存蒲公英页面，保持登录态。
-        print("[setup] 蒲公英平台已登录，开始登录 findai 插件。")  # 标记蒲公英登录完成并进入插件登录。
-        pgy_page.wait_for_timeout(3000)  # 蒲公英登录成功后等待插件浮层恢复可交互。
-        _login_findai_from_platform_overlay(pgy_page, login_info)  # 在已登录蒲公英页面上执行 findai 插件登录。
     if "xt" in selected_platforms:
         print("[setup] 开始打开星图平台。")  # 星图按优先级最后打开。
         xt_page = context.new_page()  # 星图单独一个页面，保持打开。
@@ -177,13 +174,11 @@ def _prepare_logged_browser_context(context, login_info, open_extension_page, se
         if not xt_login.login("xingtu", wait_manual_seconds=wait_seconds):
             raise RuntimeError(f"xingtu login was not completed within {wait_seconds} seconds.")  # 星图登录失败时阻止后续星图用例。
         platform_pages["xingtu"] = xt_page  # 保存星图页面，保持登录态。
-    print("[setup] 指定平台页面已打开，开始读取插件 token/base_url/storage。")  # 平台页准备完成后再读取插件动态参数。
-    extension_page = open_extension_page(context, "options.html#/login")  # 打开插件页，用于读取 token/base_url/storage。
+    print("[setup] 指定平台页面已打开，最后打开 FindAI 插件登录页。")  # 无论选择哪个平台，均在平台页准备完毕后再登录 FindAI。
+    extension_page = open_extension_page(context, "options.html#/login")  # 打开 FindAI 插件登录页，用于完成登录并读取 token/base_url/storage。
     base_url = get_findai_base_url_from_extension(extension_page)  # 从当前插件读取测试/生产环境接口域名。
-    if set(selected_platforms) & SMART_TASK_PLATFORMS:
-        token_info = _normalize_token_info(_wait_findai_token(extension_page, login_info, base_url))  # 找号任务需要 token。
-    else:
-        token_info = _normalize_token_info(get_findai_token_from_extension(extension_page))  # 只跑采集任务时 token 可为空。
+    _login_findai_from_plugin_page(extension_page, login_info)  # FindAI 登录完成并取得 token 前，不开始任何平台用例。
+    token_info = _normalize_token_info(_wait_findai_token(extension_page, login_info, base_url))
     return platform_pages, extension_page, token_info, base_url, platform_login_status  # 返回平台页、插件页、findai 动态参数和登录门禁结果。
 
 
@@ -206,16 +201,17 @@ def _open_one_scan_login_platform_page(context, login_info, platform_pages: dict
     return logged_in
 
 
-def _login_findai_from_platform_overlay(page, login_info) -> None:
-    """在蒲公英平台页通过 findai 插件浮层登录 findai。"""
+def _login_findai_from_plugin_page(page, login_info) -> None:
+    """在最后打开的 FindAI 插件登录页完成自动或手动登录。"""
     account = login_info.get("findai", {})  # 读取 findai 账号配置。
     mobile = account.get("username", "")  # findai 手机号。
     password = account.get("password", "")  # findai 密码。
     if not mobile or not password:
-        page.locator(".overlay-container").click(timeout=10000)
-        print("[setup] findai username/password is empty; please complete plugin login manually.")
+        print("[setup] FindAI 未配置账号密码；请在当前插件登录页手动登录，测试将等待 token 写入。")
         return
-    page.locator(".overlay-container").click(timeout=10000)  # 点击 findai 插件浮层。
+    overlay = page.locator(".overlay-container")  # 部分插件版本仍需先激活 overlay。
+    if overlay.count():
+        overlay.click(timeout=10000)
     page.get_by_role("textbox", name="请输入手机号码").fill(mobile)  # 填写 findai 手机号。
     page.get_by_role("textbox", name="请输入密码").fill(password)  # 填写 findai 密码。
     _click_findai_login_button(page)  # 点击 findai 插件弹窗里的蓝色登录按钮。
