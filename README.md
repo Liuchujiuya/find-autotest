@@ -4,13 +4,13 @@ Windows CLI for FindAI automated tests. Users need neither Git nor Python; Googl
 
 ## Install
 
-Download the latest Windows release and install it to `%USERPROFILE%\.find-autotest`:
+Download the latest Windows executable and install it to `%USERPROFILE%\.find-autotest`:
 
 ```powershell
-$installer = Join-Path $env:TEMP 'find-autotest-install.ps1'; Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/Liuchujiuya/find-autotest/main/install.ps1' -OutFile $installer; powershell -NoProfile -ExecutionPolicy Bypass -File $installer
+iex (Invoke-WebRequest -UseBasicParsing 'https://raw.githubusercontent.com/Liuchujiuya/find-autotest/main/install.ps1').Content
 ```
 
-The GitHub release must include an asset named `find-autotest-windows.zip`. The installed directory contains only:
+The GitHub release must include an asset named `find-autotest.exe`. The installed directory contains only:
 
 ```text
 .find-autotest/
@@ -38,6 +38,6 @@ The executable stores its temporary test runtime under `%LOCALAPPDATA%\find-auto
 powershell -ExecutionPolicy Bypass -File .\packaging\build_exe.ps1
 ```
 
-Upload `dist-release\find-autotest-windows.zip` to a GitHub Release. The installer downloads that release asset.
+Upload `dist-release\find-autotest.exe` to a GitHub Release. The installer downloads that release asset directly; ZIP is optional for manual downloads.
 
 The default build uses the user's installed Google Chrome and keeps the ZIP small. Use `-IncludePlaywrightBrowser` only for a fully bundled browser build; it adds roughly 500 MB.

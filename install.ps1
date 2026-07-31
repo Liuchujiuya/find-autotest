@@ -5,42 +5,22 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$archiveUrl = "https://github.com/$Repo/releases/latest/download/find-autotest-windows.zip"
-$tempRoot = Join-Path $env:TEMP ("find-autotest-" + [guid]::NewGuid().ToString("N"))
+$assetUrl = "https://github.com/$Repo/releases/latest/download/find-autotest.exe"
+$binDir = Join-Path $InstallDir "bin"
+$exePath = Join-Path $binDir "find-autotest.exe"
 
-try {
-    New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
-    $archivePath = Join-Path $tempRoot "find-autotest-windows.zip"
-    Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
-    Expand-Archive -LiteralPath $archivePath -DestinationPath $tempRoot -Force
+New-Item -ItemType Directory -Force -Path $binDir, (Join-Path $InstallDir "extension") | Out-Null
+Invoke-WebRequest -Uri $assetUrl -OutFile $exePath
+Unblock-File -LiteralPath $exePath -ErrorAction SilentlyContinue
 
-    foreach ($name in @("bin", "config.yaml", "extension")) {
-        $source = Join-Path $tempRoot $name
-        if (-not (Test-Path -LiteralPath $source)) {
-            throw "Release archive is missing: $name"
-        }
-    }
-
-    New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
-    foreach ($name in @("bin", "extension")) {
-        $source = Join-Path $tempRoot $name
-        $destination = Join-Path $InstallDir $name
-        if (Test-Path -LiteralPath $destination) {
-            Remove-Item -LiteralPath $destination -Recurse -Force
-        }
-        Copy-Item -LiteralPath $source -Destination $destination -Recurse -Force
-    }
-
-    $configSource = Join-Path $tempRoot "config.yaml"
-    $configDestination = Join-Path $InstallDir "config.yaml"
-    if ($Force -or -not (Test-Path -LiteralPath $configDestination)) {
-        Copy-Item -LiteralPath $configSource -Destination $configDestination -Force
-    }
-
-    Write-Host "Installed Find Autotest: $InstallDir"
-    Write-Host "Run: & '$InstallDir\bin\find-autotest.exe' where"
-} finally {
-    if (Test-Path -LiteralPath $tempRoot) {
-        Remove-Item -LiteralPath $tempRoot -Recurse -Force
-    }
+$installArgs = @("install")
+if ($Force) {
+    $installArgs += "--force"
 }
+& $exePath @installArgs
+if ($LASTEXITCODE -ne 0) {
+    throw "find-autotest setup failed with exit code $LASTEXITCODE"
+}
+
+Write-Host "Installed Find Autotest: $InstallDir"
+Write-Host "Extension folder: $(Join-Path $InstallDir 'extension')"

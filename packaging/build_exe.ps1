@@ -57,6 +57,7 @@ Copy-Item -LiteralPath (Join-Path $root "project\login_info.yaml.example") -Dest
 New-Item -ItemType Directory -Force -Path (Join-Path $distRoot "extension") | Out-Null
 New-Item -ItemType File -Force -Path (Join-Path $distRoot "extension\.gitkeep") | Out-Null
 Compress-Archive -Path (Join-Path $distRoot "bin"), (Join-Path $distRoot "config.yaml"), (Join-Path $distRoot "extension") -DestinationPath (Join-Path $distRoot "find-autotest-windows.zip") -Force
+Copy-Item -LiteralPath (Join-Path $distRoot "bin\find-autotest.exe") -Destination (Join-Path $distRoot "find-autotest.exe") -Force
 
 Write-Host ""
 Write-Host "Release generated:"
@@ -64,6 +65,7 @@ Write-Host "  $distRoot\bin\find-autotest.exe"
 Write-Host "  $distRoot\config.yaml"
 Write-Host "  $distRoot\extension\"
 Write-Host "  $distRoot\find-autotest-windows.zip"
+Write-Host "  $distRoot\find-autotest.exe"
 Write-Host ""
 Write-Host "User quick start:"
 Write-Host "  .\bin\find-autotest.exe install"
