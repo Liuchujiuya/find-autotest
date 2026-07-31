@@ -1,0 +1,4 @@
+interface:
+  display_name: "find-autotest"
+  short_description: "Run FindAI platform tests by selection."
+  default_prompt: "运行 FindAI 自动化测试，平台：小红书、抖音、蒲公英、星图"

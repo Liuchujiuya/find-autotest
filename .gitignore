@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.idea/
+
+project/login_info.yaml
+project/extension/**
+!project/extension/
+!project/extension/.gitkeep
+project/testresult/**
+!project/testresult/
+!project/testresult/.gitkeep
+
+*.bak.*
+allure-results/
+allure-report/

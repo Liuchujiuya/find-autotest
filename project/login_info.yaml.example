@@ -1,0 +1,37 @@
+platforms:
+  pugongying:
+    username: ''
+    password: ''
+  xingtu:
+    username: ''
+    password: ''
+  xiaohongshu:
+    username: ''
+    password: ''
+    api_key: ''
+  douyin:
+    username: ''
+    password: ''
+    api_key: ''
+findai:
+  username: ''
+  password: ''
+  token: ''
+  token_info: {}
+  token_saved_at: ''
+  base_url: ''
+  base_url_saved_at: ''
+  device_id: ''
+  device_id_saved_at: ''
+runtime:
+  platforms:
+    pgy:
+      third_id: ''
+    pugongying:
+      third_id: ''
+    xt:
+      third_id: ''
+    xingtu:
+      third_id: ''
+  device_id: ''
+  saved_at: ''

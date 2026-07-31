@@ -1,0 +1,252 @@
+source_excel: C:\Users\Administrator\Desktop\Find测试用例2.0.xlsx
+methods:
+- name: get_pgy_task_list
+  steps: 调用/api/smartPluginTask/backendList接口
+  request_example: "{\n    \"fdType\": 1,\n    \"createdBy\": null,\n    \"fdNo\": \"\",\n    \"fdCompanyType\": null,\n    \"fdIsFastTask\":\
+    \ null,\n    \"fdIsScheduled\": false,\n    \"fdIsSelf\": true,\n    \"limit\": 10,\n    \"pageIndex\": 1,\n    \"sortName\": \"\",\n    \"\
+    sortOrder\": \"\"\n}"
+  response_example: "{\n  \"data\": [\n    {\n      \"id\": \"19f64c9f46238fbe484fab24ac9b804c\",\n      \"remarks\": null,\n      \"createdBy\"\
+    : \"18a441c254cb382d801fef645f8b4388\",\n      \"createdDate\": \"2026-07-15 15:59:45\",\n      \"createdByName\": \"陈茹萍\",\n      \"fdName\"\
+    : \"20260715_自定义任务\",\n      \"fdStartTime\": \"2026-07-15 15:59:53\",\n      \"fdEndTime\": \"2026-07-15 16:04:59\",\n      \"fdTimeConsuming\"\
+    : \"00:05:06\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\": \"蒲公英\",\n      \"fdTaskSum\"\
+    : 9,\n      \"fdFinishCount\": 9,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n      \"fdFilterUserFilePath\": null,\n\
+    \      \"fdHasMore\": false,\n      \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\",\n      \"fdGeneralThirdFilter\": null,\n     \
+    \ \"fdEnhancedThirdFilter\": null,\n      \"fdNo\": \"T_26071515594473885\",\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\":\
+    \ 1,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n \
+    \   },\n    {\n      \"id\": \"19f64c95431ca52a237fffc47db872f0\",\n      \"remarks\": \"手动终止\",\n      \"createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\"\
+    ,\n      \"createdDate\": \"2026-07-15 15:59:04\",\n      \"createdByName\": \"刘勤\",\n      \"fdName\": \"20260715_小红书_全部\",\n      \"fdStartTime\"\
+    : \"2026-07-15 15:59:12\",\n      \"fdEndTime\": \"2026-07-15 16:02:35\",\n      \"fdTimeConsuming\": \"00:03:23\",\n      \"fdStatus\": 10,\n\
+    \      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\": \"蒲公英\",\n      \"fdTaskSum\": 17,\n      \"fdFinishCount\": 16,\n\
+    \      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n      \"fdFilterUserFilePath\": \"\",\n      \"fdHasMore\": false,\n  \
+    \    \"fdTaskType\": 1,\n      \"fdTaskTypeStr\": \"普通任务\",\n      \"fdGeneralThirdFilter\": \"{\\\"博主类目\\\":[\\\"科技数码-全部\\\"],\\\"粉丝量\\\"\
+    :[\\\"100万以上\\\"]}\",\n      \"fdEnhancedThirdFilter\": \"{\\\"过滤条件\\\":[\\\"过滤任务名单-20260714_小红书_全部\\\"]}\",\n      \"fdNo\": \"T_26071515590373142\"\
+    ,\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\": 0,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n     \
+    \ \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f602f0d502647838a19cc4fbc9973e\",\n      \"\
+    remarks\": null,\n      \"createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n      \"createdDate\": \"2026-07-14 18:32:04\",\n      \"createdByName\"\
+    : \"刘勤\",\n      \"fdName\": \"20260714_抖音_运动健身1\",\n      \"fdStartTime\": \"2026-07-14 18:32:34\",\n      \"fdEndTime\": \"2026-07-14 18:38:10\"\
+    ,\n      \"fdTimeConsuming\": \"00:05:36\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 1,\n      \"fdTypeStr\"\
+    : \"星图\",\n      \"fdTaskSum\": 10,\n      \"fdFinishCount\": 10,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n    \
+    \  \"fdFilterUserFilePath\": \"\",\n      \"fdHasMore\": false,\n      \"fdTaskType\": 1,\n      \"fdTaskTypeStr\": \"普通任务\",\n      \"fdGeneralThirdFilter\"\
+    : \"{\\\"内容类型\\\":[\\\"运动健身-健身\\\",\\\"随拍-全部\\\"],\\\"粉丝数量\\\":[\\\"1000w以上\\\"],\\\"达人报价\\\":[\\\"21-60s视频\\\"]}\",\n      \"fdEnhancedThirdFilter\"\
+    : \"{}\",\n      \"fdNo\": \"T_26071418320417865\",\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\": 0,\n      \"fdIsScheduled\"\
+    : false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"\
+    19f602e1b9a3a0dc5c074674118a33f1\",\n      \"remarks\": null,\n      \"createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n      \"createdDate\"\
+    : \"2026-07-14 18:31:02\",\n      \"createdByName\": \"刘勤\",\n      \"fdName\": \"20260714_抖音_运动健身\",\n      \"fdStartTime\": \"2026-07-14\
+    \ 18:31:04\",\n      \"fdEndTime\": \"2026-07-14 18:31:05\",\n      \"fdTimeConsuming\": \"00:00:01\",\n      \"fdStatus\": 10,\n      \"\
+    fdStatusStr\": \"结束\",\n      \"fdType\": 1,\n      \"fdTypeStr\": \"星图\",\n      \"fdTaskSum\": 2,\n      \"fdFinishCount\": 2,\n      \"\
+    fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n      \"fdFilterUserFilePath\": \"\",\n      \"fdHasMore\": false,\n      \"fdTaskType\"\
+    : 1,\n      \"fdTaskTypeStr\": \"普通任务\",\n      \"fdGeneralThirdFilter\": \"{\\\"内容类型\\\":[\\\"运动健身-健身\\\"],\\\"粉丝数量\\\":[\\\"1000w以上\\\"\
+    ],\\\"达人报价\\\":[\\\"21-60s视频\\\"]}\",\n      \"fdEnhancedThirdFilter\": \"{}\",\n      \"fdNo\": \"T_26071418310230083\",\n      \"fdCompanyName\"\
+    : \"广而易\",\n      \"fdDownloadNum\": 0,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n   \
+    \   \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f602dab24c337220166be47beb190a\",\n      \"remarks\": \"手动终止\",\n    \
+    \  \"createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n      \"createdDate\": \"2026-07-14 18:30:34\",\n      \"createdByName\": \"刘勤\"\
+    ,\n      \"fdName\": \"20260714_小红书_全部\",\n      \"fdStartTime\": \"2026-07-14 18:30:34\",\n      \"fdEndTime\": \"2026-07-14 18:32:11\",\n\
+    \      \"fdTimeConsuming\": \"00:01:37\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\"\
+    : \"蒲公英\",\n      \"fdTaskSum\": 42,\n      \"fdFinishCount\": 42,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n   \
+    \   \"fdFilterUserFilePath\": \"\",\n      \"fdHasMore\": false,\n      \"fdTaskType\": 1,\n      \"fdTaskTypeStr\": \"普通任务\",\n      \"fdGeneralThirdFilter\"\
+    : \"{\\\"博主类目\\\":[\\\"文化艺术-全部\\\"],\\\"粉丝量\\\":[\\\"100万以上\\\"]}\",\n      \"fdEnhancedThirdFilter\": \"{}\",\n      \"fdNo\": \"T_26071418303351047\"\
+    ,\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\": 3,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n     \
+    \ \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f5e558bbac07a6ad618f948fc9eadf\",\n      \"\
+    remarks\": null,\n      \"createdBy\": \"19ef3d8ce66992384d9d6bc49d1a5b29\",\n      \"createdDate\": \"2026-07-14 09:54:53\",\n      \"createdByName\"\
+    : \"张璐\",\n      \"fdName\": \"20260714_自定义任务\",\n      \"fdStartTime\": \"2026-07-14 09:55:22\",\n      \"fdEndTime\": \"2026-07-14 10:13:25\"\
+    ,\n      \"fdTimeConsuming\": \"00:18:03\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 2,\n      \"fdTypeStr\"\
+    : \"腾讯互选-视频号\",\n      \"fdTaskSum\": 29,\n      \"fdFinishCount\": 29,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n\
+    \      \"fdFilterUserFilePath\": null,\n      \"fdHasMore\": false,\n      \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\",\n     \
+    \ \"fdGeneralThirdFilter\": null,\n      \"fdEnhancedThirdFilter\": null,\n      \"fdNo\": \"T_26071409545247445\",\n      \"fdCompanyName\"\
+    : \"广而易\",\n      \"fdDownloadNum\": 1,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n   \
+    \   \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f5a36da17bf9d7599d642454da57b8\",\n      \"remarks\": null,\n      \"\
+    createdBy\": \"172c57bf4dc3f6baf2f4aae437392020\",\n      \"createdDate\": \"2026-07-13 14:42:52\",\n      \"createdByName\": \"wsz\",\n \
+    \     \"fdName\": \"20260713_自定义任务2\",\n      \"fdStartTime\": \"2026-07-13 14:43:25\",\n      \"fdEndTime\": \"2026-07-13 14:43:25\",\n \
+    \     \"fdTimeConsuming\": \"00:00:00\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\"\
+    : \"蒲公英\",\n      \"fdTaskSum\": 1,\n      \"fdFinishCount\": 1,\n      \"fdIsFastTask\": true,\n      \"fdFilterUserDay\": null,\n      \"\
+    fdFilterUserFilePath\": null,\n      \"fdHasMore\": false,\n      \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\",\n      \"fdGeneralThirdFilter\"\
+    : null,\n      \"fdEnhancedThirdFilter\": null,\n      \"fdNo\": \"T_26071314425205577\",\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\"\
+    : 0,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n \
+    \   },\n    {\n      \"id\": \"19f5a36776464fd01242ab04a68bc483\",\n      \"remarks\": null,\n      \"createdBy\": \"172c57bf4dc3f6baf2f4aae437392020\"\
+    ,\n      \"createdDate\": \"2026-07-13 14:42:27\",\n      \"createdByName\": \"wsz\",\n      \"fdName\": \"20260713_自定义任务1\",\n      \"fdStartTime\"\
+    : \"2026-07-13 14:42:55\",\n      \"fdEndTime\": \"2026-07-13 14:43:20\",\n      \"fdTimeConsuming\": \"00:00:25\",\n      \"fdStatus\": 10,\n\
+    \      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\": \"蒲公英\",\n      \"fdTaskSum\": 1,\n      \"fdFinishCount\": 1,\n\
+    \      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n      \"fdFilterUserFilePath\": null,\n      \"fdHasMore\": false,\n  \
+    \    \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\",\n      \"fdGeneralThirdFilter\": null,\n      \"fdEnhancedThirdFilter\": null,\n\
+    \      \"fdNo\": \"T_26071314422678894\",\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\": 0,\n      \"fdIsScheduled\": false,\n\
+    \      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f5a2be7a96a377101550043219eb68\"\
+    ,\n      \"remarks\": null,\n      \"createdBy\": \"172c57bf4dc3f6baf2f4aae437392020\",\n      \"createdDate\": \"2026-07-13 14:30:55\",\n\
+    \      \"createdByName\": \"wsz\",\n      \"fdName\": \"20260713_自定义任务\",\n      \"fdStartTime\": \"2026-07-13 14:30:55\",\n      \"fdEndTime\"\
+    : \"2026-07-13 14:30:55\",\n      \"fdTimeConsuming\": \"00:00:00\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\"\
+    : 0,\n      \"fdTypeStr\": \"蒲公英\",\n      \"fdTaskSum\": 1,\n      \"fdFinishCount\": 1,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\"\
+    : null,\n      \"fdFilterUserFilePath\": null,\n      \"fdHasMore\": false,\n      \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\"\
+    ,\n      \"fdGeneralThirdFilter\": null,\n      \"fdEnhancedThirdFilter\": null,\n      \"fdNo\": \"T_26071314305463320\",\n      \"fdCompanyName\"\
+    : \"广而易\",\n      \"fdDownloadNum\": 1,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n   \
+    \   \"fdSourceTypeStr\": \"普通任务\"\n    },\n    {\n      \"id\": \"19f59736e56f150a20a673143f882682\",\n      \"remarks\": null,\n      \"\
+    createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n      \"createdDate\": \"2026-07-13 11:09:25\",\n      \"createdByName\": \"刘勤\",\n  \
+    \    \"fdName\": \"伊利足球盛宴_C类_贴纸手工生活场景\",\n      \"fdStartTime\": \"2026-07-13 11:59:02\",\n      \"fdEndTime\": \"2026-07-13 12:10:51\",\n\
+    \      \"fdTimeConsuming\": \"00:11:49\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\"\
+    : \"蒲公英\",\n      \"fdTaskSum\": 159,\n      \"fdFinishCount\": 159,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n \
+    \     \"fdFilterUserFilePath\": \"\",\n      \"fdHasMore\": false,\n      \"fdTaskType\": 1,\n      \"fdTaskTypeStr\": \"普通任务\",\n      \"\
+    fdGeneralThirdFilter\": \"{\\\"博主类目\\\":[\\\"生活记录-全部\\\",\\\"兴趣爱好-全部\\\",\\\"家居家装-全部\\\"],\\\"擅长内容\\\":[\\\"vlog\\\"],\\\"笔记关键词\\\":[\\\"\
+    贴纸\\\"]}\",\n      \"fdEnhancedThirdFilter\": \"{}\",\n      \"fdNo\": \"T_26071311092495095\",\n      \"fdCompanyName\": \"广而易\",\n     \
+    \ \"fdDownloadNum\": 1,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\"\
+    : \"普通任务\"\n    }\n  ],\n  \"pageCount\": 174,\n  \"total\": 1738,\n  \"pageSize\": 10\n}"
+  purpose: '1.断言功能，断言正确依据： 返回结果中包含 fdName = 调用 /api/smartPluginTask/build 接口传参中fdName的任务。
+
+    2.如果断言正确，返回并保存下该任务的用例ID ，fdName ，fdNo ， id'
+- name: get_task_status
+  steps: 调用/smartPluginTask/list接口，一共调用3次，每次调用间隔时间：300s。传参中的fdNo字段，为方法：get_pgy_task_list/get_task_info_xt;返回的fdNo
+  request_example: "{\n    \"fdType\": null,\n    \"createdBy\": null,\n    \"fdNo\": $(fdNo),\n    \"fdCompanyType\": null,\n    \"fdIsFastTask\"\
+    : null,\n    \"fdIsScheduled\": false,\n    \"fdIsSelf\": false,\n    \"limit\": 10,\n    \"pageIndex\": 1,\n    \"sortOrder\": null\n}"
+  response_example: "{\n  \"data\": [\n    {\n      \"id\": \"19f64c9f46238fbe484fab24ac9b804c\",\n      \"remarks\": null,\n      \"createdBy\"\
+    : \"18a441c254cb382d801fef645f8b4388\",\n      \"createdDate\": \"2026-07-15 15:59:45\",\n      \"createdByName\": \"陈茹萍\",\n      \"fdName\"\
+    : \"20260715_自定义任务\",\n      \"fdStartTime\": \"2026-07-15 15:59:53\",\n      \"fdEndTime\": \"2026-07-15 16:04:59\",\n      \"fdTimeConsuming\"\
+    : \"00:05:06\",\n      \"fdStatus\": 10,\n      \"fdStatusStr\": \"结束\",\n      \"fdType\": 0,\n      \"fdTypeStr\": \"蒲公英\",\n      \"fdTaskSum\"\
+    : 9,\n      \"fdFinishCount\": 9,\n      \"fdIsFastTask\": false,\n      \"fdFilterUserDay\": null,\n      \"fdFilterUserFilePath\": null,\n\
+    \      \"fdHasMore\": false,\n      \"fdTaskType\": 3,\n      \"fdTaskTypeStr\": \"自定义任务\",\n      \"fdGeneralThirdFilter\": null,\n     \
+    \ \"fdEnhancedThirdFilter\": null,\n      \"fdNo\": \"T_26071515594473885\",\n      \"fdCompanyName\": \"广而易\",\n      \"fdDownloadNum\":\
+    \ 1,\n      \"fdIsScheduled\": false,\n      \"fdTaskMessage\": \"\",\n      \"fdSourceType\": 0,\n      \"fdSourceTypeStr\": \"普通任务\"\n \
+    \   }\n  ],\n  \"pageCount\": 1,\n  \"total\": 1,\n  \"pageSize\": 10\n}"
+  purpose: '1.断言功能，断言正确依据：在3次的接口调用，只要返回结果中 fdStatus = 10，则表示断言正确，并结束该方法；
+
+    2. 如果断言正确，return并保存下该任务的用例ID ，fdName ，fdNo ， id'
+- name: get_task_info_pgy
+  steps: 调用/api/smartPluginTaskUser/list接口，根据get_task_status方法返回值，替换传参中的fdSmartPluginTaskId  = id ，fdNo = fdNo。
+  request_example: "{\n    \"fdQueryType\": 1,\n    \"enable\": 1,\n    \"fdNo\": ${fdNo},\n    \"fdSmartPluginTaskId\": ${id},\n    \"limit\"\
+    : 10,\n    \"pageIndex\": 1,\n    \"sortName\": \"\",\n    \"sortOrder\": \"\",\n    \"isMatch\": null\n}"
+  response_example: "{\n    \"code\": 1,\n    \"message\": \"success\",\n    \"data\": {\n        \"data\": [\n            {\n               \
+    \ \"fdName\": \"静静教主\",\n                \"fdFansNum\": \"1,329,760\",\n                \"fdCompositeNum\": \"11,941,755\",\n            \
+    \    \"fdCode\": \"jiaozhu2018\",\n                \"fdLink\": \"https://www.xiaohongshu.com/user/profile/5b6443c5837bda00012b8867\",\n  \
+    \              \"fdPgyLink\": \"https://pgy.xiaohongshu.com/solar/pre-trade/blogger-detail/5b6443c5837bda00012b8867\",\n                \"\
+    fdPicturePrice\": \"￥45,000\",\n                \"fdVideoPrice\": \"￥60,000\",\n                \"fdGenderDistributionOfFans\": \"女性居多，占比90.6%\"\
+    ,\n                \"fdAgeDistributionOfFans\": \"18-24居多，占比37.1%\",\n                \"fdProvincesDistributionOfFans\": \"广东居多，占比12.5%\"\
+    ,\n                \"fdCitiesDistributionOfFans\": \"北京居多，占比4.1%\",\n                \"fdProvincesDistributionOfFanPortrait\": \"广东：12.5%，江苏：7.0%，山东：6.8%，浙江：6.2%，河南：5.6%，北京：4.1%，四川：4.1%\"\
+    ,\n                \"fdCitiesDistributionOfFanPortrait\": \"北京：4.1%，上海：4.0%，深圳：3.2%，广州：3.1%，杭州：2.3%，成都：2.2%，武汉：1.9%\",\n                \"\
+    fdInterestsDistributionOfFanPortrait\": \"娱乐：10.4%，生活记录：9.5%，教育：7.2%，美食：7.0%，影视：6.9%\",\n                \"fdMcnName\": \"星爵文化\",\n      \
+    \          \"fdIpLocation\": \"河南 安阳 文峰区\",\n                \"fdCurrentLevel\": \"健康\",\n                \"fdInterRate\": \"10.00%\",\n \
+    \               \"fdActiveFansRate\": \"54.60%\",\n                \"fdPictureReadCost\": \"3.06 元/阅读\",\n                \"fdVideoReadCost\"\
+    : \"6.52 元/阅读\",\n                \"fdPgyFansIncreaseNum\": \"-3,029\",\n                \"fdPgyGrowthFansRate\": \"-0.20%\",\n          \
+    \      \"fdPicReadCost\": \"0\",\n                \"fdVideoReadCostV2\": \"4.96\",\n                \"fdMCpuvNum\": \"0\",\n             \
+    \   \"fdImpHomefeedPercent\": \"30.7%\",\n                \"fdImpSearchPercent\": \"1.6%\",\n                \"fdImpFollowPercent\": \"49.7%\"\
+    ,\n                \"fdImpDetailPercent\": \"8.2%\",\n                \"fdImpNearbyPercent\": \"0%\",\n                \"fdImpOtherPercent\"\
+    : \"9.8%\",\n                \"fdReadHomefeedPercent\": \"58%\",\n                \"fdReadSearchPercent\": \"0.5%\",\n                \"fdReadFollowPercent\"\
+    : \"34.2%\",\n                \"fdReadDetailPercent\": \"4.7%\",\n                \"fdReadNearbyPercent\": \"0%\",\n                \"fdReadOtherPercent\"\
+    : \"2.6%\",\n                \"fdEngageFansRate\": \"0.40%\",\n                \"fdInterMidNum\": \"468\",\n                \"fdClickMidNum\"\
+    : \"7,235\",\n                \"fdExposureMidNum\": \"49,461\",\n                \"fdContentTags\": \"科技数码-[\\\"玩机攻略\\\",\\\"移动数码\\\"]\",\n\
+    \                \"fdContentTagObjects\": {\n                    \"科技数码\": [\n                        \"玩机攻略\",\n                        \"\
+    移动数码\"\n                    ]\n                },\n                \"fdFeatureTags\": \"vlog、教程\",\n                \"fdPersonalTags\": \"\
+    --\",\n                \"fdStatus\": 2,\n                \"fdStatusStr\": \"结束\",\n                \"fdIsShow\": true,\n                \"\
+    id\": \"19f64c97da78920761720c5404983537\",\n                \"fdUid\": \"5b6443c5837bda00012b8867\",\n                \"fdRealAppearance\"\
+    : \"否\",\n                \"fdSex\": 2,\n                \"fdSexStr\": \"女\",\n                \"fdPgyNoteNumber\": \"3\",\n             \
+    \   \"fdPgyArticleNoteNumber\": \"0\",\n                \"fdPgyVideoNoteNumber\": \"3\",\n                \"fdPgyNoteType\": \"科技数码(66.7)、影视综资讯(33.3)\"\
+    ,\n                \"fdPgyLikeMidNum\": \"285\",\n                \"fdPgyCollectMidNum\": \"126\",\n                \"fdPgyCommentMidNum\"\
+    : \"28\",\n                \"fdPgyShareMidNum\": \"20\",\n                \"fdPgyFollowMidNum\": \"8\",\n                \"fdPgyInterRate\"\
+    : \"10.00%\",\n                \"fdPgyVideoFullViewRate\": \"3.50%\",\n                \"fdPgyPictureViewRate\": \"0.00%\",\n            \
+    \    \"fdPgyHundredLikePercent\": \"100.00%\",\n                \"fdPgyThousandLikePercent\": \"33.30%\",\n                \"fdPgyThirtyCooperateNoteNumber\"\
+    : \"4\",\n                \"fdPgyThirtyCooperateArticleNoteNumber\": \"0\",\n                \"fdPgyThirtyCooperateVideoNoteNumber\": \"4\"\
+    ,\n                \"fdPgyThirtyCooperateNoteType\": \"科技数码(75.0)、教育(25.0)\",\n                \"fdPgyThirtyCooperateTopTradeType\": \"3c及电器\"\
+    ,\n                \"fdPgyThirtyCooperateExposureMidNum\": \"347,850\",\n                \"fdPgyThirtyCooperateClickMidNum\": \"14,010\",\n\
+    \                \"fdPgyThirtyCooperateInterMidNum\": \"1,527\",\n                \"fdPgyThirtyCooperateInterRate\": \"6.90%\",\n        \
+    \        \"fdPgyThirtyCooperateLikeMidNum\": \"978\",\n                \"fdPgyThirtyCooperateCollectMidNum\": \"427\",\n                \"\
+    fdPgyThirtyCooperateCommentMidNum\": \"30\",\n                \"fdPgyThirtyCooperateShareMidNum\": \"71\",\n                \"fdPgyThirtyCooperateFollowMidNum\"\
+    : \"18\",\n                \"fdPgyThirtyCooperateVideoFullViewRate\": \"2.00%\",\n                \"fdPgyThirtyCooperatePictureViewRate\"\
+    : \"0.00%\",\n                \"fdPgyThirtyCooperateHundredLikePercent\": \"100.00%\",\n                \"fdPgyThirtyCooperateThousandLikePercent\"\
+    : \"50.00%\",\n                \"fdPgyNinetyNoteNumber\": \"10\",\n                \"fdPgyNinetyArticleNoteNumber\": \"0\",\n            \
+    \    \"fdPgyNinetyVideoNoteNumber\": \"10\",\n                \"fdPgyNinetyNoteType\": \"科技数码(50.0)、教育(10.0)\",\n                \"fdPgyNinetyExposureMidNum\"\
+    : \"123,400\",\n                \"fdPgyNinetyClickMidNum\": \"44,747\",\n                \"fdPgyNinetyInterMidNum\": \"2,452\",\n        \
+    \        \"fdPgyNinetyLikeMidNum\": \"1,406\",\n                \"fdPgyNinetyCollectMidNum\": \"757\",\n                \"fdPgyNinetyCommentMidNum\"\
+    : \"38\",\n                \"fdPgyNinetyShareMidNum\": \"94\",\n                \"fdPgyNinetyFollowMidNum\": \"50\",\n                \"fdPgyNinetyInterRate\"\
+    : \"4.80%\",\n                \"fdPgyNinetyVideoFullViewRate\": \"2.80%\",\n                \"fdPgyNinetyPictureViewRate\": \"0.00%\",\n \
+    \               \"fdPgyNinetyHundredLikePercent\": \"100.00%\",\n                \"fdPgyNinetyThousandLikePercent\": \"70.00%\",\n       \
+    \         \"fdPgyNinetyCooperateNoteNumber\": \"12\",\n                \"fdPgyNinetyCooperateArticleNoteNumber\": \"0\",\n               \
+    \ \"fdPgyNinetyCooperateVideoNoteNumber\": \"12\",\n                \"fdPgyNinetyCooperateNoteType\": \"科技数码(83.3)、教育(8.3)\",\n          \
+    \      \"fdPgyNinetyCooperateTopTradeType\": \"3c及电器\",\n                \"fdPgyNinetyCooperateExposureMidNum\": \"328,075\",\n          \
+    \      \"fdPgyNinetyCooperateInterMidNum\": \"1,546\",\n                \"fdPgyNinetyCooperateClickMidNum\": \"35,542\",\n               \
+    \ \"fdPgyNinetyCooperateLikeMidNum\": \"1,114\",\n                \"fdPgyNinetyCooperateCollectMidNum\": \"463\",\n                \"fdPgyNinetyCooperateCommentMidNum\"\
+    : \"30\",\n                \"fdPgyNinetyCooperateShareMidNum\": \"75\",\n                \"fdPgyNinetyCooperateFollowMidNum\": \"34\",\n \
+    \               \"fdPgyNinetyCooperateInterRate\": \"4.20%\",\n                \"fdPgyNinetyCooperateVideoFullViewRate\": \"3.00%\",\n   \
+    \             \"fdPgyNinetyCooperatePictureViewRate\": \"0.00%\",\n                \"fdPgyNinetyCooperateHundredLikePercent\": \"100.00%\"\
+    ,\n                \"fdPgyNinetyCooperateThousandLikePercent\": \"58.30%\",\n                \"fdImage\": \"https://sns-avatar-qc.xhscdn.com/avatar/5b6a5e0ed1d3b94cb9667e2b.jpg?imageView2/2/w/80/format/jpg\"\
+    ,\n                \"fdSmartPluginTaskId\": \"19f64c95431ca52a237fffc47db872f0\",\n                \"fdSmartPluginProjectId\": null,\n   \
+    \             \"fdIsMatch\": true,\n                \"fdMaleFansRate\": \"9.4%\",\n                \"fdFemaleFansRate\": \"90.6%\",\n    \
+    \            \"fdAgeUnder18Ratio\": \"11.88%\",\n                \"fdAge18To24Ratio\": \"37.15%\",\n                \"fdAge25To34Ratio\":\
+    \ \"33.71%\",\n                \"fdAge35To44Ratio\": \"12.89%\",\n                \"fdAgeOver44Ratio\": \"4.38%\",\n                \"fdInterestsDistributionOfFans\"\
+    : \"娱乐居多，占比10.4%\",\n                \"fdDevicesDistributionOfFans\": \"apple inc.居多，占比39.3%\",\n                \"fdDevicesDistributionOfFanPortrait\"\
+    : \"apple inc.：39.3%，huawei：19.0%，vivo：11.4%，oppo：10.1%，xiaomi：10.0%，honor：5.8%，oneplus：1.0%，samsung：0.9%，realme：0.7%，lenovo：0.2%\",\n   \
+    \             \"fdDailyNoteCpm\": 899.64,\n                \"fdDailyNoteCpc\": 14.51,\n                \"fdDailyNoteCpe\": 96.15,\n      \
+    \          \"fdCooperNoteCpm\": 174.65,\n                \"fdCooperNoteCpc\": 3.46,\n                \"fdCooperNoteCpe\": 49.97,\n       \
+    \         \"hasNoteDetail\": false\n            }\n        ],\n        \"pageCount\": 1,\n        \"total\": 1,\n        \"pageSize\": 10\n\
+    \    },\n    \"time\": 1784103577318\n}"
+  purpose: '1.断言功能，断言正确依据：在testcases用例的结果断言中，具体指定其返回结果的断言依据。
+
+    2.保存结果，该任务的用例ID ，fdName ，fdNo ， id，接口返回结果，后续的用例可能需要解析保存结果，产生过滤条件'
+- name: get_task_info_xt
+  steps: 调用smartPluginTaskUser/xtList接口，根据get_task_status方法返回值，替换传参中的fdSmartPluginTaskId  = id ，fdNo = fdNo。
+  request_example: "{\n    \"fdQueryType\": 1,\n    \"enable\": 1,\n    \"fdNo\": ${fdNo},\n    \"fdSmartPluginTaskId\": ${id},\n    \"limit\"\
+    : 10,\n    \"pageIndex\": 1,\n    \"sortName\": \"\",\n    \"sortOrder\": \"\",\n    \"fdName\": \"\",\n    \"fdUid\": \"\",\n    \"isMatch\"\
+    : null\n}"
+  response_example: "{\n  \"data\": [\n    {\n      \"id\": \"19f602f882f968a09a9bb4b4f138da95\",\n      \"fdName\": \"2米饭桶\",\n      \"fdFansNum\"\
+    : \"12,499,264\",\n      \"fdCode\": \"ChineseYouth_2M\",\n      \"fdLink\": \"https://www.douyin.com/user/MS4wLjABAAAArnZ_ASkaklqQie9juVEFVszuN7UP7QpQjhZ408aMcM8eV5rYv554wkLehhEznbQx\"\
+    ,\n      \"fdSex\": 1,\n      \"fdSexStr\": \"男\",\n      \"fdArea\": \"北京\",\n      \"fdLabels\": \"生活：[生活记录]，随拍：[随拍]\",\n      \"fdXtLink\"\
+    : \"https://www.xingtu.cn/ad/creator/author/douyin/7049344014239137833/1\",\n      \"fdTwentySecPrice\": \"￥380,000\",\n      \"fdSixtySecPrice\"\
+    : \"￥380,000\",\n      \"fdGtSixtySecPrice\": \"￥600,000\",\n      \"fdSpreadWeight\": \"96.72\",\n      \"fdUserConnectionNum\": \"54,948,976\"\
+    ,\n      \"fdDeepUserConnectionNum\": \"29,973,926\",\n      \"fdCpm\": \"短视频1-20s:34.3,短视频20-60s:28.5,短视频60s+:45\",\n      \"fdTaskExpectNum\"\
+    : \"13,345,117\",\n      \"fdInteractRate\": \"2.69%\",\n      \"fdFinishPlayRate\": \"6.87%\",\n      \"fdFansAddRate\": \"0.30%\",\n   \
+    \   \"fdMaleFansRate\": \"61.68%\",\n      \"fdFemaleFansRate\": \"38.32%\",\n      \"fdAge18To23Ratio\": \"9.51%\",\n      \"fdAge24To30Ratio\"\
+    : \"19.34%\",\n      \"fdAge31To40Ratio\": \"41.72%\",\n      \"fdAge41To50Ratio\": \"18.31%\",\n      \"fdAgeOver50Ratio\": \"11.12%\",\n\
+    \      \"fdNewFirstTierRatio\": \"--\",\n      \"fdFirstTierRatio\": \"27.85%\",\n      \"fdSecondTierRatio\": \"19.47%\",\n      \"fdThirdTierRatio\"\
+    : \"23.62%\",\n      \"fdFourthTierRatio\": \"17.98%\",\n      \"fdFifthTierRatio\": \"11.08%\",\n      \"fdStarWeight\": \"84.19\",\n   \
+    \   \"fdPlantGrassWeight\": \"94.56\",\n      \"fdConvertWeight\": \"71.2\",\n      \"fdCostPerformanceWeight\": \"69.61\",\n      \"fdCooperationWeight\"\
+    : \"88.88\",\n      \"fdTownMiddleAgedElderlyRatio\": \"10.46%\",\n      \"fdSeniorMiddleClassRatio\": \"10.82%\",\n      \"fdGenZRatio\"\
+    : \"8.72%\",\n      \"fdUrbanSilverHairRatio\": \"10.09%\",\n      \"fdTownYouthRatio\": \"17.73%\",\n      \"fdRefinedMomRatio\": \"8.18%\"\
+    ,\n      \"fdNewWhiteCollarRatio\": \"19.98%\",\n      \"fdUrbanBlueCollarRatio\": \"14.01%\",\n      \"fdUid\": \"7049344014239137833\",\n\
+    \      \"fdRealAppearance\": \"否\",\n      \"fdIndustryTags\": \"汽车-汽车厂商、美妆-面部洗护、互联网电商服务-综合电商平台\",\n      \"fdCommentHotKey\": \"孩子: 412、视频:\
+    \ 316、北京: 293、阿姨: 244、山东: 220\",\n      \"fdContentHotKey\": \"方便: 3、孩子: 3、爸爸: 3、西兰花: 3、体验: 3\",\n      \"fdPlayMediumNum\": \"14500954\"\
+    ,\n      \"fdThirtyPersonalLikeAvg\": \"369,100\",\n      \"fdThirtyPersonalItemNum\": \"7\",\n      \"fdThirtyPersonalShareAvg\": \"34,794\"\
+    ,\n      \"fdThirtyPersonalCommentAvg\": \"12,322\",\n      \"fdThirtyPersonalAvgDuration\": \"427s\",\n      \"fdThirtyStarPlayMediumNum\"\
+    : \"9,553,204\",\n      \"fdThirtyStarFinishPlayRate\": \"4.65%\",\n      \"fdThirtyStarInteractRate\": \"2.54%\",\n      \"fdThirtyStarLikeAvg\"\
+    : \"198,515\",\n      \"fdThirtyStarItemNum\": \"0\",\n      \"fdThirtyStarShareAvg\": \"37,970\",\n      \"fdThirtyStarCommentAvg\": \"6,248\"\
+    ,\n      \"fdThirtyStarAvgDuration\": \"493.4s\",\n      \"fdNinetyPersonalPlayMediumNum\": \"23,028,444\",\n      \"fdNinetyPersonalFinishPlayRate\"\
+    : \"6.35%\",\n      \"fdNinetyPersonalInteractRate\": \"2.37%\",\n      \"fdNinetyPersonalLikeAvg\": \"450,721\",\n      \"fdNinetyPersonalItemNum\"\
+    : \"13\",\n      \"fdNinetyPersonalShareAvg\": \"57,890\",\n      \"fdNinetyPersonalCommentAvg\": \"16,765\",\n      \"fdNinetyPersonalAvgDuration\"\
+    : \"433s\",\n      \"fdNinetyStarPlayMediumNum\": \"16,640,126\",\n      \"fdNinetyStarFinishPlayRate\": \"5.35%\",\n      \"fdNinetyStarInteractRate\"\
+    : \"1.79%\",\n      \"fdNinetyStarLikeAvg\": \"278,771\",\n      \"fdNinetyStarItemNum\": \"7\",\n      \"fdNinetyStarShareAvg\": \"29,022\"\
+    ,\n      \"fdNinetyStarCommentAvg\": \"7,801\",\n      \"fdNinetyStarAvgDuration\": \"452s\",\n      \"fdContentThemeLabels\": \"家庭生活记录、消费体验、家庭亲子生活、夫妻情感、创业经历、摆摊经营、美食探索、家庭旅行、海鲜体验\"\
+    ,\n      \"fdTopTradeType\": \"零售、社交通讯、个护家清、3C数码家电、美妆\",\n      \"fdMcnName\": \"合平鼎基\",\n      \"fdSnProspectiveCpe\": \"短视频1-20s:1.5,短视频20-60s:1.2,短视频60s+:1.8\"\
+    ,\n      \"fdProspectiveCpm\": \"短视频1-20s:27.7,短视频20-60s:25.2,短视频60s+:39.8\",\n      \"fdProspectiveCpe\": \"短视频1-20s:1.5,短视频20-60s:1.2,短视频60s+:1.8\"\
+    ,\n      \"fdProspectiveTaskExpectNum\": \"15,061,988\",\n      \"fdPlatformHotRate\": \"50.00%\",\n      \"fdShortVideoPlantPrice\": \"暂停接单\"\
+    ,\n      \"fdShortVideoPreheatPrice\": \"暂停接单\",\n      \"fdCustomShortDramaEpisodePrice\": \"暂停接单\",\n      \"fdDouyinShortVideoCollectionPrice\"\
+    : \"暂停接单\",\n      \"fdDouyinShortVideoCreatorMainPrice\": \"暂停接单\",\n      \"fdDouyinShortVideoCreatorParticipantPrice\": \"￥4,000\",\n \
+    \     \"fdIsEcom\": \"是\",\n      \"fdEcomThirtyGmvRange\": \"<=1k\",\n      \"fdEcomThirtyGpmRange\": \"<=80\",\n      \"fdEcomThirtyPv\"\
+    : \"--\",\n      \"fdEcomThirtyAvgOrderRange\": \"<=10\",\n      \"fdAvatar\": \"https://p26.douyinpic.com/aweme/1080x1080/aweme-avatar/tos-cn-avt-0015_e2718c73edefdc9aa56051a74d443f13.jpeg?from=3782654143\"\
+    ,\n      \"fdLabelObjects\": {\n        \"生活\": [\n          \"生活记录\"\n        ],\n        \"随拍\": [\n          \"随拍\"\n        ]\n      },\n\
+    \      \"fdSmartPluginTaskId\": \"19f602f0d502647838a19cc4fbc9973e\",\n      \"fdSmartPluginProjectId\": null,\n      \"fdIsMatch\": true,\n\
+    \      \"fdAvgA3IncrCnt\": \"<5\",\n      \"fdAvgSearchAfterViewRate\": \"<0.02%\"\n    }\n  ],\n  \"pageCount\": 1,\n  \"total\": 1,\n  \"\
+    pageSize\": 10\n}"
+  purpose: '
+
+    1.断言功能，断言正确依据：在testcases用例的结果断言中，具体指定其返回结果的断言依据。
+
+    2.保存该任务的用例ID ，fdName ，fdNo ， id，接口返回结果，后续的用例可能需要解析结果，产生过滤条件'
+- name: get_cjtask_status
+  steps: 调用/api/collectTask/list接口，一共调用3次，每次调用间隔时间：300s。传参中的fdNo字段，为方法：/api/collectTask/buildCollectTask返回的fdNo
+  request_example: "{\n    \"fdTaskNo\": ${fdNo},\n    \"limit\": 10,\n    \"pageIndex\": 1,\n    \"sortName\": \"createdDate\",\n    \"sortOrder\"\
+    : \"asc\"\n}"
+  response_example: "{\n    \"code\": 1,\n    \"message\": \"success\",\n    \"data\": {\n        \"data\": [\n            {\n               \
+    \ \"id\": \"19f8983292d45e69408a20d46658a531\",\n                \"createdBy\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n                \"\
+    createdDate\": \"2026-07-22 19:08:22\",\n                \"lastModifiedBy\": \"163d3ef6d483eba509e1daa490ba9396\",\n                \"lastModifiedDate\"\
+    : \"2026-07-22 19:08:52\",\n                \"remarks\": null,\n                \"fdTaskNo\": \"CT_26072219082218905\",\n                \"\
+    fdType\": 3,\n                \"fdTypeStr\": \"采集评论\",\n                \"fdPlatform\": 4,\n                \"fdPlatformStr\": \"抖音\",\n \
+    \               \"fdCollectMethod\": null,\n                \"fdCollectMethodStr\": null,\n                \"fdStatus\": 10,\n           \
+    \     \"fdStatusStr\": \"结束\",\n                \"fdCreatorAccountId\": \"180747cb7d9f49abf0bbbbc486887ea6\",\n                \"fdCompanyType\"\
+    : 1,\n                \"fdResultCount\": 1,\n                \"fdTotalCount\": 1,\n                \"fdErrorMsg\": null,\n               \
+    \ \"fdParams\": \"{\\\"urls\\\":[\\\"https://www.douyin.com/video/7660470984683703598\\\"],\\\"maxCount\\\":100}\"\n            }\n      \
+    \  ],\n        \"pageCount\": 1,\n        \"total\": 1,\n        \"pageSize\": 10\n    },\n    \"time\": 1785147262776\n}"
+  purpose: '1.断言功能，断言正确依据：在3次的接口调用，只要返回结果中 fdStatus = 10，则表示断言正确，并结束该方法；
+
+    2. 如果断言正确，return并保存下该任务的fdNo ， id'
+- name: get_cjtask_info
+  steps: 调用/api/collectTask/detail?id=${id}接口，。传参中的id字段，为方法：/api/collectTask/buildCollectTask返回的id
+  request_example: null
+  response_example: null
+  purpose: '
+
+    1.断言功能，断言正确依据：在testcases用例的结果断言中，具体指定其返回结果的断言依据。
+
+    '

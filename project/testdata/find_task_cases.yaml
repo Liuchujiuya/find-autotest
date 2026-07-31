@@ -1,0 +1,2582 @@
+source_excel: C:\Users\Administrator\Desktop\Find测试用例2.0.xlsx
+general_rules:
+- 测试用例接口传参中的${}为变量，需要根据general中的默认规则，如果默认规则没有，就是按照用例中操作步骤说明的规则进行变量替换
+- fdName（任务名） = 用例ID _ 当前时间%YYYY-MM-DD HH:MM:SS。
+- fdOriginalThirdId = 登录谷歌浏览器插件实际拿到的
+- fdOriginalDeviceId = 登录谷歌浏览器插件实际拿到的
+cases:
+- id: pgy01
+  title: 蒲公英平台-快速任务创建
+  platform: pgy
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '
+
+    "fdContentTags": "科技数码-[\"科技数码其他\",\"移动数码\"]",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_0c9e45daeb6f4646b4a55af98c84ad8c","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFilterUserDay":null,"fdFansDevice":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdContentTags
+      contains:
+      - 科技数码
+- id: pgy02
+  title: 蒲公英平台-快速任务支持过滤【标签】-包含
+  platform: pgy
+  steps: '1.分析pgy01用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，和拥有tage1标签的达人的 fdCode 字段，存储为一个列表为usercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_0c9e45daeb6f4646b4a55af98c84ad8c","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":["${tage1}"],"mustNotTags":[],"area":[],"fdFilterUserDay":null,"fdFansDevice":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${tage1}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: usercodes
+    item_count_equals_variable_length: usercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy01
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    include_variables:
+    - tage1
+    exclude_variables: []
+    result_variable: usercodes
+  depends_on:
+  - pgy01
+- id: pgy03
+  title: 蒲公英平台-快速任务支持过滤【标签】-不包含
+  platform: pgy
+  steps: '1.分析pgy01用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，和没有拥有tage1标签的达人的 fdCode 字段，存储为一个列表为nousercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca986c4d3b941be84c73226eaa6beef","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"mustTags":[],"mustNotTags":["${tage1}"],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${tage1}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: nousercodes
+    item_count_equals_variable_length: nousercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy01
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    include_variables: []
+    exclude_variables:
+    - tage1
+    result_variable: nousercodes
+  depends_on:
+  - pgy01
+- id: pgy04
+  title: 蒲公英平台-快速任务支持过滤【标签】-包含+不包含
+  platform: pgy
+  steps: '1.分析pgy01用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，并且查询拥有tage1标签的达人，再将这些达人的标签进行数量统计，除tage1以外，数量第一的标签为tage2，最后得到含有tage1标签，但是不含有tage2标签的达人fdcode字段，存储为一个列表unusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1，${tage2} = 步骤2拿到的tage2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_e7282463688345808eca24cd2635fcfa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":["${tage1}"],"mustNotTags":["${tage2}"],"area":[],"fdFilterUserDay":null,"fdFansDevice":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${tage1}","去除标签-${tage2}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: unusercodes
+    item_count_equals_variable_length: unusercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy01
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    - name: tage2
+      rank: 1
+      order: desc
+      scope_include_variables:
+      - tage1
+      exclude_variables:
+      - tage1
+    include_variables:
+    - tage1
+    exclude_variables:
+    - tage2
+    result_variable: unusercodes
+  depends_on:
+  - pgy01
+- id: pgy05
+  title: 蒲公英平台-详情任务创建
+  platform: pgy
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '
+
+    "fdContentTags": "科技数码-[\"科技数码其他\",\"移动数码\"]",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_3ee8fd6e3d964fa1a1d783f297421dbd","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"mustTags":[],"mustNotTags":[],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdContentTags
+      contains:
+      - 科技数码
+- id: pgy06
+  title: 蒲公英平台-详情任务支持过滤【标签】-包含
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，和拥有tage1标签的达人的 fdCode 字段，存储为一个列表为xqusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_3ee8fd6e3d964fa1a1d783f297421dbd","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"mustTags":["${tage1}"],"mustNotTags":[],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${tage1}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: xqusercodes
+    item_count_equals_variable_length: xqusercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy05
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    include_variables:
+    - tage1
+    exclude_variables: []
+    result_variable: xqusercodes
+  depends_on:
+  - pgy05
+- id: pgy07
+  title: 蒲公英平台-详情任务支持过滤【标签】-不包含
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，和没有拥有tage1标签的达人的 fdCode 字段，存储为一个列表为xqnousercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_3ee8fd6e3d964fa1a1d783f297421dbd","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"mustTags":[],"mustNotTags":["${tage1}"],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${tage1}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: xqnousercodes
+    item_count_equals_variable_length: xqnousercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy05
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    include_variables: []
+    exclude_variables:
+    - tage1
+    result_variable: xqnousercodes
+  depends_on:
+  - pgy05
+- id: pgy08
+  title: 蒲公英平台-详情任务支持过滤【标签】-包含+不包含
+  platform: pgy
+  steps: '1.分析pgy01用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdFeatureTags，为空不算，对标签数量进行排序，保存存在数量第一的标签 为 tage1，并且查询拥有tage1标签的达人，再将这些达人的标签进行数量统计，除tage1以外，数量第一的标签为tage2，最后得到含有tage1标签，但是不含有tage2标签的达人fdcode字段，存储为一个列表xqunusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1,${tage2} =步骤1拿到的tage2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: '1.为空时："fdFeatureTags": "--",
+
+    2.不为空时："fdFeatureTags": "测评、眼部护理、仿妆、教程、开箱",'
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_3ee8fd6e3d964fa1a1d783f297421dbd","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"mustTags":["${tage1}"],"mustNotTags":["${tage2}"],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${tage1}","去除标签-${tage2}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: xqunusercodes
+    item_count_equals_variable_length: xqunusercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy01
+    source_field: fdFeatureTags
+    id_field: fdCode
+    extractor: split
+    value_variables:
+    - name: tage1
+      rank: 1
+      order: desc
+    - name: tage2
+      rank: 1
+      order: desc
+      scope_include_variables:
+      - tage1
+      exclude_variables:
+      - tage1
+    include_variables:
+    - tage1
+    exclude_variables:
+    - tage2
+    result_variable: xqunusercodes
+  depends_on:
+  - pgy01
+- id: pgy09
+  title: 蒲公英平台-详情任务支持过滤【粉丝地域省】
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdProvincesDistributionOfFanPortrait字段，获取每个达人排名前3的省份，然后拿到数量第一的省份province1，并且将前3拥有该该省份province1的达人fdcode字段，存储为一个列表prousercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${province1} = 步骤1拿到的province1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: "fdProvincesDistributionOfFanPortrait\n: \n\"广东：12.5%，江苏：7.0%，山东：6.8%，浙江：6.2%，河南：5.6%，北京：4.1%，四川：4.1%\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":["${province1}省"],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":["${province1}"],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"过滤条件":["粉丝地域-${province1}省"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: prousercodes
+    item_count_equals_variable_length: prousercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy05
+    source_field: fdProvincesDistributionOfFanPortrait
+    id_field: fdCode
+    extractor: distribution_top3
+    value_variables:
+    - name: province1
+      rank: 1
+    include_variables:
+    - province1
+    exclude_variables: []
+    result_variable: prousercodes
+  depends_on:
+  - pgy05
+- id: pgy10
+  title: 蒲公英平台-详情任务支持过滤【粉丝地域市】
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdCitiesDistributionOfFanPortrait字段，获取每个达人排名前3的城市，然后拿到数量第一的城市city1，并且将前3拥有该该城市city1的达人fdcode字段，存储为一个列表cityusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${city1} = 步骤1拿到的city1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: "fdCitiesDistributionOfFanPortrait\n: \n\"北京：4.1%，上海：4.0%，深圳：3.2%，广州：3.1%，杭州：2.3%，成都：2.2%，武汉：1.9%\"\n"
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":["${city1}市"],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":["${city1}"],"fdCitiesFansRegion":["${city1}"]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"过滤条件":["粉丝地域-${city1}市"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: cityusercodes
+    item_count_equals_variable_length: cityusercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy05
+    source_field: fdCitiesDistributionOfFanPortrait
+    id_field: fdCode
+    extractor: distribution_top3
+    value_variables:
+    - name: city1
+      rank: 1
+    include_variables:
+    - city1
+    exclude_variables: []
+    result_variable: cityusercodes
+  depends_on:
+  - pgy05
+- id: pgy11
+  title: 蒲公英平台-详情任务支持过滤【粉丝设备】
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdDevicesDistributionOfFanPortrait字段，获取每个达人排名前3的设备，然后拿到数量第二的设备device2，并且将前3拥有该设备device2的达人fdcode字段，存储为一个列表devusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${device2} = 步骤1拿到的device2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法 '
+  parse_target_example: "fdDevicesDistributionOfFanPortrait\n: \n\"apple inc.：39.3%，huawei：19.0%，vivo：11.4%，oppo：10.1%，xiaomi：10.0%，honor：5.8%，oneplus：1.0%，samsung：0.9%，realme：0.7%，lenovo：0.2%\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":"${device1}","fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"过滤条件":["粉丝设备-${device1}居多"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: devusercodes
+    item_count_equals_variable_length: devusercodes
+  prepare_variables:
+  - type: value_filter
+    source_case: pgy05
+    source_field: fdDevicesDistributionOfFanPortrait
+    id_field: fdCode
+    extractor: distribution_top3
+    value_variables:
+    - name: device1
+      rank: 2
+    include_variables:
+    - device1
+    exclude_variables: []
+    result_variable: devusercodes
+  depends_on:
+  - pgy05
+- id: pgy12
+  title: 蒲公英平台-详情任务支持过滤【30天日常笔记数量】- 大于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在大于等于avg1  的达人fdcode字段，存储为一个列表moreusercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":0,"fdMinArticleNum":${avg1},"fdMaxArticleNum":null,"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近30天日常笔记",["${avg1} ~\n          不限"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: moreusercodes3
+    item_count_equals_variable_length: moreusercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNoteNumber
+    id_field: fdCode
+    result_variable: moreusercodes3
+    relation: gte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy13
+  title: 蒲公英平台-详情任务支持过滤【30天日常笔记数量】-小于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在小于等于avg1  的达人fdcode字段，存储为一个列表lessusercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":0,"fdMinArticleNum":null,"fdMaxArticleNum":${avg1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近30天日常笔记",["不限 ~\n          ${avg1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: lessusercodes3
+    item_count_equals_variable_length: lessusercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNoteNumber
+    id_field: fdCode
+    result_variable: lessusercodes3
+    relation: lte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy14
+  title: 蒲公英平台-详情任务支持过滤【30天日常笔记数量】- 区间
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNoteNumber字段，不包含为0的数据，计算平均值avg1和最大值max1 并且将笔记数量在大于等于avg1 and 小于等于max1  的达人fdcode字段，存储为一个列表unusercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1，${max1} = 步骤1拿到的max1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":0,"fdMinArticleNum":${avg1},"fdMaxArticleNum":${max1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":[["${avg1} ~\n          ${max1}"],"笔记类型-近30天日常笔记"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: unusercodes3
+    item_count_equals_variable_length: unusercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNoteNumber
+    id_field: fdCode
+    result_variable: unusercodes3
+    relation: between_avg_max
+    average_variable: avg1
+    max_variable: max1
+  depends_on:
+  - pgy05
+- id: pgy15
+  title: 蒲公英平台-详情任务支持过滤【30天合作笔记数量】- 大于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyThirtyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在大于等于avg1  的达人fdcode字段，存储为一个列表morecousercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyThirtyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":2,"fdMinArticleNum":${avg1},"fdMaxArticleNum":null,"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近30天合作笔记",["${avg1} ~\n          不限"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: morecousercodes3
+    item_count_equals_variable_length: morecousercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyThirtyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: morecousercodes3
+    relation: gte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy16
+  title: 蒲公英平台-详情任务支持过滤【30天合作笔记数量】-小于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyThirtyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在小于等于avg1  的达人fdcode字段，存储为一个列表lesscousercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyThirtyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":2,"fdMinArticleNum":null,"fdMaxArticleNum":${avg1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近30天合作笔记",["不限 ~\n          ${avg1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: lesscousercodes3
+    item_count_equals_variable_length: lesscousercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyThirtyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: lesscousercodes3
+    relation: lte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy17
+  title: 蒲公英平台-详情任务支持过滤【30天合作笔记数量】- 区间
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyThirtyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1和最大值max1 并且将笔记数量在大于等于avg1 and 小于等于max1  的达人fdcode字段，存储为一个列表uncousercodes3
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1，${max1} = 步骤1拿到的max1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyThirtyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":2,"fdMinArticleNum":${avg1},"fdMaxArticleNum":${max1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近30天合作笔记",["${avg1} ~\n          ${max1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: morecousercodes3
+    item_count_equals_variable_length: morecousercodes3
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyThirtyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: morecousercodes3
+    relation: between_avg_max
+    average_variable: avg1
+    max_variable: max1
+  depends_on:
+  - pgy05
+- id: pgy18
+  title: 蒲公英平台-详情任务支持过滤【90天日常笔记数量】- 大于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在大于等于avg1  的达人fdcode字段，存储为一个列表moreusercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":1,"fdMinArticleNum":${avg1},"fdMaxArticleNum":null,"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近90天日常笔记",["${avg1} ~\n          不限"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: moreusercodes9
+    item_count_equals_variable_length: moreusercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyNoteNumber
+    id_field: fdCode
+    result_variable: moreusercodes9
+    relation: gte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy19
+  title: 蒲公英平台-详情任务支持过滤【90天日常笔记数量】-小于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在小于等于avg1  的达人fdcode字段，存储为一个列表lessusercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":1,"fdMinArticleNum":null,"fdMaxArticleNum":${avg1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近90天日常笔记",["不限 ~\n          ${avg1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: lessusercodes9
+    item_count_equals_variable_length: lessusercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyNoteNumber
+    id_field: fdCode
+    result_variable: lessusercodes9
+    relation: lte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy20
+  title: 蒲公英平台-详情任务支持过滤【90天日常笔记数量】- 区间
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyNoteNumber字段，不包含为0的数据，计算平均值avg1和最大值max1 并且将笔记数量在大于等于avg1 and 小于等于max1  的达人fdcode字段，存储为一个列表unusercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1,${max1} = 步骤1拿到的max1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":1,"fdMinArticleNum":${avg1},"fdMaxArticleNum":${max1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":[["${avg1} ~\n          ${max1}"],"笔记类型-近90天日常笔记"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: unusercodes9
+    item_count_equals_variable_length: unusercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyNoteNumber
+    id_field: fdCode
+    result_variable: unusercodes9
+    relation: between_avg_max
+    average_variable: avg1
+    max_variable: max1
+  depends_on:
+  - pgy05
+- id: pgy21
+  title: 蒲公英平台-详情任务支持过滤【90天合作笔记数量】- 大于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在大于等于avg1  的达人fdcode字段，存储为一个列表morecousercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":3,"fdMinArticleNum":${avg1},"fdMaxArticleNum":null,"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近90天合作笔记",["${avg1} ~\n          不限"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: morecousercodes9
+    item_count_equals_variable_length: morecousercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: morecousercodes9
+    relation: gte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy22
+  title: 蒲公英平台-详情任务支持过滤【90天合作笔记数量】-小于等于
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1 并且将笔记数量在小于等于avg1  的达人fdcode字段，存储为一个列表lesscousercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":3,"fdMinArticleNum":null,"fdMaxArticleNum":${avg1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近90天合作笔记",["不限 ~\n          ${avg1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: lesscousercodes9
+    item_count_equals_variable_length: lesscousercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: lesscousercodes9
+    relation: lte_avg
+    average_variable: avg1
+    max_variable: null
+  depends_on:
+  - pgy05
+- id: pgy23
+  title: 蒲公英平台-详情任务支持过滤【90天合作笔记数量】- 区间
+  platform: pgy
+  steps: '1.分析pgy05用例get_task_info_pgy方法的保存结果数据，解析每个达人的fdPgyNinetyCooperateNoteNumber字段，不包含为0的数据，计算平均值avg1和最大值max1 并且将笔记数量在大于等于avg1 and 小于等于max1  的达人fdcode字段，存储为一个列表uncousercodes9
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${tage1} = 步骤1拿到的tage1,${max1} = 步骤1拿到的max1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: "fdPgyNinetyCooperateNoteNumber\n: \n\"3\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[],"fdArticleNumType":3,"fdMinArticleNum":${avg1},"fdMaxArticleNum":${max1},"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"笔记筛选":["笔记类型-近90天合作笔记",["${avg1} ~\n          ${max1}"]]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: uncousercodes9
+    item_count_equals_variable_length: uncousercodes9
+  prepare_variables:
+  - type: numeric_filter
+    source_case: pgy05
+    source_field: fdPgyNinetyCooperateNoteNumber
+    id_field: fdCode
+    result_variable: uncousercodes9
+    relation: between_avg_max
+    average_variable: avg1
+    max_variable: max1
+  depends_on:
+  - pgy05
+- id: pgy24
+  title: 蒲公英平台-详情任务支持过滤【任务名单】
+  platform: pgy
+  steps: '1.根据之前用例pgy06 ，get_task_info_pgy方法的保存结果数据。获得变量fdname 和 id，根据pgy01保存结果中含有的达人fdcode 去掉 pgy06保存结果中含有的达人fdcode，得到niusercodes
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${fdname} = 步骤1拿到的fdname。${id} = 步骤1拿到的id
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolMatch_dca8e0dfc41d4badb99c34660e5872aa","marketTarget":null,"audienceGroup":[],"contentTag":["科技数码"],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansNumberLower":1000000,"fansNumberUpper":null,"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[]}'
+      fdEnhancedSearchCondition: '{"mustTags":[],"mustNotTags":[],"area":[],"fdFansDevice":null,"fdFilterUserDay":null,"fdFilterUserFilePath":"","fdFilterTaskList":[{"label":"${fdname}","value":"${id}"}],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"过滤条件":["过滤任务名单-${fdname}"]}'
+      fdGeneralThirdFilter: '{"博主类目":["科技数码-全部"],"粉丝量":["100万以上"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdFilterTaskList:
+      - ${id}
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdCode
+      in_variable: niusercodes
+    item_count_equals_variable_length: niusercodes
+  prepare_variables:
+  - type: task_difference
+    source_case: pgy01
+    exclude_case: pgy06
+    metadata_case: pgy06
+    id_field: fdCode
+    result_variable: niusercodes
+    fdname_variable: fdname
+    id_variable: id
+  depends_on:
+  - pgy01
+- id: pgy25
+  title: 蒲公英平台-相似快速任务创建
+  platform: pgy
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换。
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_pgy方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolSimilar_e6fd4355bebd4badb9b10964c194934d","marketTarget":null,"audienceGroup":[],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[],"similarUserId":"579f4aca82ec3967ddc9c7fa","similarWord":"579f4aca82ec3967ddc9c7fa"}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFilterUserDay":null,"fdFansDevice":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"相似推荐":["https://pgy.xiaohongshu.com/solar/pre-trade/blogger-detail/579f4aca82ec3967ddc9c7fa?track_id=kolMatch_343cf9405fb4443d932098c93b10f489&fromRoute=Advertiser_Kol&source=Advertiser_Kol"]}'
+      fdGeneralThirdFilter: '{"相似作者":["你好竹子"]}'
+      fdSimilarUrlList:
+      - https://pgy.xiaohongshu.com/solar/pre-trade/blogger-detail/579f4aca82ec3967ddc9c7fa?track_id=kolMatch_343cf9405fb4443d932098c93b10f489&fromRoute=Advertiser_Kol&source=Advertiser_Kol
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks: []
+- id: pgy26
+  title: 蒲公英平台-相似详细任务创建
+  platform: pgy
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换。
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_pgy方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"searchType":0,"column":"comprehensiverank","sort":"desc","pageNum":1,"pageSize":20,"brandUserId":"61ea788b000000001000d97c","trackId":"kolSimilar_e6fd4355bebd4badb9b10964c194934d","marketTarget":null,"audienceGroup":[],"personalTags":[],"gender":null,"location":null,"signed":-1,"featureTags":[],"fansAge":0,"fansGender":0,"fansLocation":null,"fansMaritalStatus":-1,"fansConsumptionLevel":-1,"fansChildAgeInfo":[],"fansDevicePrice":[],"fansDeviceBrand":[],"accumCommonImpMedinNum30d":[],"readMidNor30":[],"interMidNor30":[],"thousandLikePercent30":[],"noteType":0,"progressOrderCnt":[],"tradeType":"不限","tradeReportBrandIdSet":[],"excludedTradeReportBrandId":false,"estimateCpuv30d":[],"inStar":0,"firstIndustry":"","secondIndustry":"","newHighQuality":0,"filterIntention":false,"flagList":[{"flagType":"HAS_BRAND_COOP_BUYER_AUTH","flagValue":"0"},{"flagType":"IS_HIGH_QUALITY","flagValue":"0"}],"activityCodes":[],"excludeLowActive":false,"fansNumUp":0,"excludedTradeReportBrand":false,"excludedTradeInviteReportBrand":false,"filterList":[],"contentSceneLabel":[],"similarUserId":"579f4aca82ec3967ddc9c7fa","similarWord":"579f4aca82ec3967ddc9c7fa"}'
+      fdEnhancedSearchCondition: '{"area":[],"fdFilterUserDay":null,"fdFansDevice":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdIsOrganizationNumber":null,"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[],"fdArticleNumType":null,"fdMinArticleNum":null,"fdMaxArticleNum":null,"fdProvincesFansRegion":[],"fdCitiesFansRegion":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 全部
+      fdIsScheduled: false
+      fdSourceType: 0
+      fdDevelopmentNum: 200
+      fdBrief: ''
+      fdEnhancedThirdFilter: '{"相似推荐":["https://pgy.xiaohongshu.com/solar/pre-trade/blogger-detail/579f4aca82ec3967ddc9c7fa?track_id=kolMatch_343cf9405fb4443d932098c93b10f489&fromRoute=Advertiser_Kol&source=Advertiser_Kol"]}'
+      fdGeneralThirdFilter: '{"相似作者":["你好竹子"]}'
+      fdSimilarUrlList:
+      - https://pgy.xiaohongshu.com/solar/pre-trade/blogger-detail/579f4aca82ec3967ddc9c7fa?track_id=kolMatch_343cf9405fb4443d932098c93b10f489&fromRoute=Advertiser_Kol&source=Advertiser_Kol
+      fdName: ${fdName}
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 0
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks: []
+- id: xt01
+  title: 星图平台-快速任务创建
+  platform: xt
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换。
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdLabels
+      contains:
+      - 科技数码
+- id: xt02
+  title: 星图平台-快速任务支持过滤【标签】- 包含
+  platform: xt
+  steps: '1.分析xt01用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最多的标签为label1（科技数码：[科技]，提取到的标签为科技），提取有该标签label1的达人fdUid字段，保存为userids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label1} = 步骤1拿到的label1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":["${label1}"],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${label1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: userids
+    item_count_equals_variable_length: userids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt01
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label1
+      rank: 1
+      order: desc
+    include_variables:
+    - label1
+    exclude_variables: []
+    result_variable: userids
+  depends_on:
+  - xt01
+- id: xt03
+  title: 星图平台-快速任务支持过滤【标签】- 不包含
+  platform: xt
+  steps: '1.分析xt01用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最少的标签为label2（科技数码：[其他、科技]"，提取到的标签为科技和其它），提取没有该标签label2的达人fdUid字段，保存为nouserids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label2} = 步骤1拿到的label2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":["${label2}"],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${label2}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: nouserids
+    item_count_equals_variable_length: nouserids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt01
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label2
+      rank: 1
+      order: asc
+    include_variables: []
+    exclude_variables:
+    - label2
+    result_variable: nouserids
+  depends_on:
+  - xt01
+- id: xt04
+  title: 星图平台-快速任务支持过滤【标签】- 包含+不包含
+  platform: xt
+  steps: '1.分析xt01用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最少的标签为label2 和数量最多的标签label1（科技数码：[其他、科技]"，提取到的标签为科技和其它），提取有该标签label1 and 没有标签label2的达人fdUid字段，保存为unuserids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label2} = 步骤1拿到的label2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":["{label1}"],"mustNotTags":["${label2}"],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${label2}","包含标签-${label1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: true
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: unuserids
+    item_count_equals_variable_length: unuserids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt01
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label1
+      rank: 1
+      order: desc
+    - name: label2
+      rank: 1
+      order: asc
+    include_variables:
+    - label1
+    exclude_variables:
+    - label2
+    result_variable: unuserids
+  depends_on:
+  - xt01
+- id: xt05
+  title: 星图平台-详情任务创建
+  platform: xt
+  steps: '1.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换。
+
+    2.执行bases中的get_task_list方法
+
+    3.执行bases中的get_task_status方法
+
+    4.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdLabels
+      contains:
+      - 科技数码
+- id: xt06
+  title: 星图平台-详情任务支持过滤【标签】- 包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最多的标签为label1（科技数码：[科技]，提取到的标签为科技），提取有该标签label1的达人fdUid字段，保存为xquserids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label1} = 步骤1拿到的label1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":["${label1}"],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["包含标签-${label1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: xquserids
+    item_count_equals_variable_length: xquserids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label1
+      rank: 1
+      order: desc
+    include_variables:
+    - label1
+    exclude_variables: []
+    result_variable: xquserids
+  depends_on:
+  - xt05
+- id: xt07
+  title: 星图平台-详情任务支持过滤【标签】- 不包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最少的标签为label2（科技数码：[其他、科技]"，提取到的标签为科技和其它），提取没有该标签label2的达人fdUid字段，保存为xqnouserids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label2} = 步骤1拿到的label2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":["${label2}"],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${label2}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: xqnouserids
+    item_count_equals_variable_length: xqnouserids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label2
+      rank: 1
+      order: asc
+    include_variables: []
+    exclude_variables:
+    - label2
+    result_variable: xqnouserids
+  depends_on:
+  - xt05
+- id: xt08
+  title: 星图平台-详情任务支持过滤【标签】- 包含+不包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdLabels字段，提取数量最少的标签为label2 和数量最多的标签label1（科技数码：[其他、科技]"，提取到的标签为科技和其它），提取有该标签label1 and 没有标签label2的达人fdUid字段，保存为xqunuserids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${label2} = 步骤1拿到的label2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "fdLabels\n: \n\"汽车：[汽车测评]，科技数码：[其他、科技]\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":["{label1}"],"mustNotTags":["${label2}"],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"标签设置":["去除标签-${label2}","包含标签-${label1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: xqunuserids
+    item_count_equals_variable_length: xqunuserids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdLabels
+    id_field: fdUid
+    extractor: labels
+    value_variables:
+    - name: label1
+      rank: 1
+      order: desc
+    - name: label2
+      rank: 1
+      order: asc
+    include_variables:
+    - label1
+    exclude_variables:
+    - label2
+    result_variable: xqunuserids
+  depends_on:
+  - xt05
+- id: xt09
+  title: 星图平台-详情任务支持过滤【机构号】
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdMcnName字段，提取fdMcnName字段不为空的达人fdUid字段，保存为mcnuseruids
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时\nfdMcnName\n: \n\"--\"\n2.不为空时\nfdMcnName\n: \n\"麦芽传媒\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":true,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"过滤条件":["机构号-是"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: mcnuseruids
+    item_count_equals_variable_length: mcnuseruids
+  prepare_variables:
+  - type: empty_filter
+    source_case: xt05
+    source_field: fdMcnName
+    id_field: fdUid
+    should_be_empty: false
+    result_variable: mcnuseruids
+  depends_on:
+  - xt05
+- id: xt10
+  title: 星图平台-详情任务支持过滤【非机构号】
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdMcnName字段，提取fdMcnName字段为空的达人fdUid字段，保存为nomcnuseruids
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时\nfdMcnName\n: \n\"--\"\n2.不为空时\nfdMcnName\n: \n\"麦芽传媒\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":false,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"过滤条件":["机构号-否"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: nomcnuseruids
+    item_count_equals_variable_length: nomcnuseruids
+  prepare_variables:
+  - type: empty_filter
+    source_case: xt05
+    source_field: fdMcnName
+    id_field: fdUid
+    should_be_empty: true
+    result_variable: nomcnuseruids
+  depends_on:
+  - xt05
+- id: xt11
+  title: 星图平台-详情任务支持过滤【评论热词】
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdCommentHotKey字段，提取数量最多的热词为cmhotkey1，将含有该热词cmhotkey1的达人fdUid保存为chkuseruids列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换,${cmhotkey1} = 步骤1中拿到的cmhotkey1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时\nfdCommentHotKey\n: \nnull\n2.不为空时\nfdCommentHotKey\n: \n\"广告: 811、中国: 367、国家: 266、手机: 230、林妹妹: 209\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":["${cmhotkey1}"],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"热词筛选":["评论热词-${cmhotkey1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: chkuseruids
+    item_count_equals_variable_length: chkuseruids
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdCommentHotKey
+    id_field: fdUid
+    extractor: hotkey
+    value_variables:
+    - name: cmhotkey1
+      rank: 1
+      order: desc
+    include_variables:
+    - cmhotkey1
+    exclude_variables: []
+    result_variable: chkuseruids
+  depends_on:
+  - xt05
+- id: xt12
+  title: 星图平台-详情任务支持过滤【内容热词】
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdContentHotKey字段，提取数量最多的热词为cohotkey1，将含有该热词cohotkey1的达人fdUid保存为chkuseruids1列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换,${cohotkey1} = 步骤1中拿到的cohotkey1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时\nfdContentHotKey: \nnull\n2.不为空时\nfdContentHotKey\n: \n\"镜头: 4、相机: 4、长焦镜头: 4、色彩风格: 2、胶片: 2\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":["${cohotkey1}"],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"热词筛选":["内容热词-${cohotkey1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: chkuseruids1
+    item_count_equals_variable_length: chkuseruids1
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdContentHotKey
+    id_field: fdUid
+    extractor: hotkey
+    value_variables:
+    - name: cohotkey1
+      rank: 1
+      order: desc
+    include_variables:
+    - cohotkey1
+    exclude_variables: []
+    result_variable: chkuseruids1
+  depends_on:
+  - xt05
+- id: xt13
+  title: 星图平台-详情任务支持过滤【行业】 - 包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdTopTradeType字段(不算为空)，，提取数量最多的行业为trade1，将含有该行业trade1的达人fdUid保存为trauseruids1列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换,${trade1} = 步骤1中拿到的trade1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时：\nfdTopTradeType\n: \n\"--\"\n2.不为空时\nfdTopTradeType\n: \n\"汽车、服饰内衣、个护家清\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":["${trade1}"],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"行业推荐":["包含行业-${trade1}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: trauseruids1
+    item_count_equals_variable_length: trauseruids1
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdTopTradeType
+    id_field: fdUid
+    extractor: split
+    value_variables:
+    - name: trade1
+      rank: 1
+      order: desc
+    include_variables:
+    - trade1
+    exclude_variables: []
+    result_variable: trauseruids1
+  depends_on:
+  - xt05
+- id: xt14
+  title: 星图平台-详情任务支持过滤【行业】 - 不包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdTopTradeType字段(不算为空)，提取数量第二多的行业为trade2，将含不有该行业trade2的达人fdUid保存为notrauseruids1列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换,${trade2} = 步骤1中拿到的trade2
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时：\nfdTopTradeType\n: \n\"--\"\n2.不为空时\nfdTopTradeType\n: \n\"汽车、服饰内衣、个护家清\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":["${trade2}"]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"行业推荐":["去除行业-${trade2}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: notrauseruids1
+    item_count_equals_variable_length: notrauseruids1
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdTopTradeType
+    id_field: fdUid
+    extractor: split
+    value_variables:
+    - name: trade2
+      rank: 2
+      order: desc
+    include_variables: []
+    exclude_variables:
+    - trade2
+    result_variable: notrauseruids1
+  depends_on:
+  - xt05
+- id: xt15
+  title: 星图平台-详情任务支持过滤【行业】 - 包含 + 不包含
+  platform: xt
+  steps: '1.分析xt05用例，get_task_info_xt方法的保存结果数据，解析达人fdTopTradeType字段(不算为空)，提取数量第二多的行业为trade2，数量第一的行业为trade1，将含行业trade1 and 不含行业trade2的达人fdUid保存为untrauseruids1列表
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换,${trade2} = 步骤1中拿到的trade2，${trade1} =  步骤1中拿到的trade1
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_xt方法'
+  parse_target_example: "1.为空时：\nfdTopTradeType\n: \n\"--\"\n2.不为空时\nfdTopTradeType\n: \n\"汽车、服饰内衣、个护家清\""
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":["${trade1}
+        "],"fdExcludedTopTradeTypes":["${trade2}"]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"行业推荐":["包含行业-${trade1} ","去除行业-${trade2}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList: []
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: untrauseruids1
+    item_count_equals_variable_length: untrauseruids1
+  prepare_variables:
+  - type: value_filter
+    source_case: xt05
+    source_field: fdTopTradeType
+    id_field: fdUid
+    extractor: split
+    value_variables:
+    - name: trade1
+      rank: 1
+      order: desc
+    - name: trade2
+      rank: 2
+      order: desc
+    include_variables:
+    - trade1
+    exclude_variables:
+    - trade2
+    result_variable: untrauseruids1
+  depends_on:
+  - xt05
+- id: xt16
+  title: '星图平台-详情任务支持过滤【任务名单】 '
+  platform: xt
+  steps: '1.根据之前用例xt06 ，get_task_info_xt方法的保存结果数据。获得变量fdname 和 id，根据xt05保存结果中含有的达人fdUid去掉 xt06保存结果中含有的达人fdUid，得到niuseruids
+
+    2.调用/api/smartPluginTask/build接口，使用传参示例，其中${}为变量需要替换，${fdname} = 步骤1拿到的fdname。${id} = 步骤1拿到的id
+
+    3.执行bases中的get_task_list方法
+
+    4.执行bases中的get_task_status方法
+
+    5.执行bases中的get_task_info_pgy方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/smartPluginTask/build
+    json:
+      fdGeneralSearchCondition: '{"scene_param":{"platform_source":1,"search_scene":1,"display_scene":1,"task_category":1,"marketing_target":1,"first_industry_id":0},"page_param":{"page":"1","limit":"20"},"sort_param":{"sort_field":{"field_name":"score"},"sort_type":2},"attribute_filter":[{"field":{"field_name":"tag"},"field_value":"[64]"},{"field":{"field_name":"follower__ge"},"field_value":"5000000"},{"field":{"field_name":"follower__le"},"field_value":"10000000"},{"field":{"field_name":"price_by_video_type__ge","rel_id":"2"},"field_value":"0"}],"search_param":{"seach_type":3,"time_range_days":180,"is_new_content_query":true}}'
+      fdEnhancedSearchCondition: '{"fdFilterUserDay":null,"fdIsOrganizationNumber":null,"fdFilterTaskList":[{"label":"${fdname}","value":"${id}"}],"fdFilterUserFilePath":"","fdXtPriceType":0,"fdMinXtVideoPrice":null,"fdMaxXtVideoPrice":null,"fdXtRecommendedPriceType":"content","mustRelationTags":[],"mustNotRelationTags":[],"sex":null,"province":[],"city":[],"xtArea":[],"fdIsAppearance":null,"fdIsChild":null,"mustTags":[],"mustNotTags":[],"fdContentHotKeyword":[],"fdCommentHotKeyword":[],"fdCooperateTags":[],"fdExcludedCooperateTags":[],"fdTopTradeTypes":[],"fdExcludedTopTradeTypes":[]}'
+      fdOriginalThirdId: ${thirdid}
+      fdOriginalDeviceId: ${deviceid}
+      fdSmartPluginProjectId: null
+      fdIndustryTitle: 科技数码
+      fdIsScheduled: false
+      fdDevelopmentNum: 200
+      fdEnhancedThirdFilter: '{"过滤条件":["过滤任务名单-${fdname}"]}'
+      fdGeneralThirdFilter: '{"内容类型":["科技数码-全部"],"粉丝数量":["500w-1000w"],"达人报价":["21-60s视频"]}'
+      fdSimilarUrlList: []
+      fdName: ${fdName}
+      fdBrief: ''
+      fdFilterTaskList:
+      - ${id}
+      fdFilterUserDay: null
+      fdFilterUserFilePath: ''
+      fdIsFastTask: false
+      fdType: 1
+      fdIsOpenPage: true
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUid
+      in_variable: niuseruids
+    item_count_equals_variable_length: niuseruids
+  prepare_variables:
+  - type: task_difference
+    source_case: xt05
+    exclude_case: xt06
+    metadata_case: xt06
+    id_field: fdUid
+    result_variable: niuseruids
+    fdname_variable: fdname
+    id_variable: id
+  depends_on:
+  - xt05
+- id: xhs-01
+  title: 小红书平台-采集博主链接
+  platform: xhs
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdBloggerNickname": "老师好我叫何同学"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 1
+      fdPlatform: 3
+      fdParams:
+        urls:
+        - https://www.xiaohongshu.com/user/profile/5c6391880000000012009893
+        - https://www.xiaohongshu.com/user/profile/616fb3390000000002024e25
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdRedId
+      in_values:
+      - '2753195295'
+      - '550242123'
+    collect_status_success: true
+    collect_detail_required: true
+- id: xhs-02
+  title: 小红书平台-采集笔记【关键词】
+  platform: xhs
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 3
+      fdParams:
+        keyword: 世界杯
+        exportCount: 50
+        noteType: 不限
+        sortType: general
+  assertions:
+    build_success: true
+    item_checks: []
+    collect_status_success: true
+- id: xhs-03
+  title: 小红书平台-采集笔记【笔记链接】
+  platform: xhs
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdNoteTitle": "14节课，带你剪出和影视飓风一样的视频"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 3
+      fdParams:
+        urls:
+        - https://www.xiaohongshu.com/discovery/item/6a116cf40000000035033de7?source=webshare&xhsshare=pc_web&xsec_token=AB6dURV6Lr4_MOzPtAPxGI_HydXfv9DXsp5vSd0cMq4CU=&xsec_source=pc_share
+        linkType: 1
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdNoteTitle
+      equals: 14节课，带你剪出和影视飓风一样的视频
+    collect_status_success: true
+    collect_detail_required: true
+- id: xhs-04
+  title: 小红书平台-采集笔记【博主链接】
+  platform: xhs
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdRedId": "550242123"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 3
+      fdParams:
+        urls:
+        - https://www.xiaohongshu.com/user/profile/5c6391880000000012009893
+        linkType: 2
+        maxCount: 10
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdRedId
+      equals: '550242123'
+    collect_status_success: true
+    collect_detail_required: true
+- id: xhs-05
+  title: 小红书平台-采集笔记评论
+  platform: xhs
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 3
+      fdPlatform: 3
+      fdParams:
+        urls:
+        - https://www.xiaohongshu.com/discovery/item/6a116cf40000000035033de7?source=webshare&xhsshare=pc_web&xsec_token=AB6dURV6Lr4_MOzPtAPxGI_HydXfv9DXsp5vSd0cMq4CU=&xsec_source=pc_share
+        maxCount: 100
+  assertions:
+    build_success: true
+    item_checks: []
+    collect_status_success: true
+- id: dy-01
+  title: 抖音平台-采集博主链接
+  platform: dy
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdUniqueId": "superslow"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 1
+      fdPlatform: 4
+      fdParams:
+        urls:
+        - https://www.douyin.com/user/MS4wLjABAAAAaCcBHb3Rhc4zxF8YkBOfHfLh6k-IWEK2l3Ne9xOXPnQ?from_tab_name=main
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUniqueId
+      equals: superslow
+    collect_status_success: true
+    collect_detail_required: true
+- id: dy-02
+  title: 抖音平台-采集视频【关键词】
+  platform: dy
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 4
+      fdParams:
+        keyword: 世界杯
+        exportCount: 50
+        noteType: 0
+        sortType: 0
+  assertions:
+    build_success: true
+    item_checks: []
+    collect_status_success: true
+- id: dy-03
+  title: 抖音平台-采集视频【视频链接】
+  platform: dy
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdVideoDesc": "Ai可以取代我，那我的意义是？#AI #特效 #创作 #乐队 #幕后"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 4
+      fdParams:
+        urls:
+        - https://www.douyin.com/video/7577734579029593380
+        linkType: 1
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdVideoDesc
+      equals: 'Ai可以取代我，那我的意义是？#AI #特效 #创作 #乐队 #幕后'
+    collect_status_success: true
+    collect_detail_required: true
+- id: dy-04
+  title: 抖音平台-采集视频【博主链接】
+  platform: dy
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法
+
+    3.执行bases中的get_cjtask_info方法'
+  parse_target_example: '"fdUniqueId": "superslow"'
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 2
+      fdPlatform: 4
+      fdParams:
+        urls:
+        - https://www.douyin.com/user/MS4wLjABAAAAaCcBHb3Rhc4zxF8YkBOfHfLh6k-IWEK2l3Ne9xOXPnQ?from_tab_name=main
+        linkType: 2
+        maxCount: 10
+  assertions:
+    build_success: true
+    item_checks:
+    - field: fdUniqueId
+      equals: superslow
+    collect_status_success: true
+    collect_detail_required: true
+- id: dy-05
+  title: 抖音平台-采集视频评论
+  platform: dy
+  steps: '1.调用接口/api/collectTask/buildCollectTask
+
+    保存返回下来结果中的fdNo 和 id 字段
+
+    2.执行bases中的get_cjtask_status方法'
+  parse_target_example: ''
+  request:
+    method: POST
+    endpoint: /api/collectTask/buildCollectTask
+    json:
+      fdType: 3
+      fdPlatform: 4
+      fdParams:
+        urls:
+        - https://www.douyin.com/video/7577734579029593380
+        maxCount: 100
+  assertions:
+    build_success: true
+    item_checks: []
+    collect_status_success: true
