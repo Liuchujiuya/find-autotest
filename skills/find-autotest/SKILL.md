@@ -31,6 +31,16 @@ For every request to run tests, perform these checks first. Do **not** say that 
 3. If the requested platforms include 小红书 (`xhs`) or 抖音 (`dy`), read the configured API key before running. If it is blank, stop and ask the user for the shared collect API key; update it with `find-autotest config --collect-api-key "..."` before testing.
 4. Only after these checks pass may the test command be run. These checks apply even when the user asks to run all four platforms.
 
+## Account configuration
+
+Users can provide account credentials for 蒲公英、星图 and FindAI, which are saved in `config.yaml`:
+
+```powershell
+find-autotest config --pgy-username "..." --pgy-password "..." --xt-username "..." --xt-password "..." --findai-username "..." --findai-password "..."
+```
+
+Only update fields that the user explicitly provides. Never print passwords. If an account is not configured, do not attempt to auto-fill its login form; leave the opened platform or plugin login page for the user to complete manually.
+
 Before running any live test, check that the FindAI Chrome extension package has been unpacked into `extension/` and that an `extension/manifest.json` file exists. If not, stop and ask the user to unpack the plugin installation package into that folder.
 
 Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
