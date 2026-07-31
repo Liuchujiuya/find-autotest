@@ -15,3 +15,7 @@ project/testresult/**
 *.bak.*
 allure-results/
 allure-report/
+
+build-release/
+dist-release/
+find-autotest.spec
