@@ -138,6 +138,7 @@ def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runti
         for case_data in cases:
             with allure.step(f"{case_data['id']} {case_data['title']}"):
                 print(f"[{platform}] start {case_data['id']} {case_data['title']}")
+                case_state["_result_assertion_phase"] = False
                 try:
                     execute_find_task_case(case_data, thread_api, findai_runtime_context, case_state)
                     print(f"[{platform}] passed {case_data['id']}")
@@ -152,8 +153,13 @@ def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runti
                     errors.append(error_info)
                     print(f"[{platform}] failed {case_data['id']}: {error}")
                     attach_json(f"{platform} {case_data['id']} failure", error_info)
+                    if isinstance(error, AssertionError) and case_state.get("_result_assertion_phase"):
+                        print(f"[{platform}] result assertion failed after task completion; continue with the next case.")
+                        continue
                     print(f"[{platform}] stop remaining cases: the previous task did not complete successfully.")
                     break
+                finally:
+                    case_state.pop("_result_assertion_phase", None)
     return errors
 
 
@@ -339,6 +345,7 @@ def execute_find_task_case(case_data, find_task_api, findai_runtime_context, cas
 
     with allure.step("步骤7：执行结果断言"):
         attach_json("步骤7-断言配置", case_data.get("assertions", {}))
+        case_state["_result_assertion_phase"] = True
         assert_case_result(case_data, items, case_state)
 
 
@@ -413,6 +420,7 @@ def execute_collect_task_case(case_data, find_task_api, case_state):
 
     with allure.step("步骤6：执行采集结果断言"):
         attach_json("步骤6-采集断言配置", case_data.get("assertions", {}))
+        case_state["_result_assertion_phase"] = True
         assert_collect_case_result(case_data, task_status, items, case_state)
 
 
