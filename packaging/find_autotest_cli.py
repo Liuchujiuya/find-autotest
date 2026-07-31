@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import os
 import shutil
 import sys
@@ -182,6 +183,9 @@ def update_config(args: argparse.Namespace) -> None:
     changed |= set_if_present(findai, "username", args.findai_username)
     changed |= set_if_present(findai, "password", args.findai_password)
 
+    notification = ensure_mapping(config, "notification")
+    changed |= set_if_present(notification, "wecom_webhook", args.wecom_webhook)
+
     if not changed:
         print("No config fields were provided.")
         return
@@ -195,6 +199,7 @@ def update_config(args: argparse.Namespace) -> None:
     print(f"collect.api_key={mask(xhs.get('api_key'))}")
     print(f"findai.username={findai.get('username', '')}")
     print(f"findai.password={mask(findai.get('password'))}")
+    print(f"notification.wecom_webhook={mask(notification.get('wecom_webhook'))}")
 
 
 def run_tests(args: argparse.Namespace) -> int:
@@ -208,13 +213,40 @@ def run_tests(args: argparse.Namespace) -> int:
 
     import pytest
 
-    pytest_args = ["-p", "allure_pytest.plugin", "--clean-alluredir"]
+    pytest_args = ["--clean-alluredir"]
+    if getattr(sys, "frozen", False):
+        pytest_args[0:0] = ["-p", "allure_pytest.plugin"]
     if args.pytest_args:
         extra_args = list(args.pytest_args)
         if extra_args and extra_args[0] == "--":
             extra_args = extra_args[1:]
         pytest_args.extend(extra_args)
-    return int(pytest.main(pytest_args))
+    pytest_code = int(pytest.main(pytest_args))
+    project_run = load_project_run_module()
+    report_code = 0
+    report_url = ""
+    if not args.no_report:
+        report_code = project_run.generate_allure_report(open_report=False)
+        if report_code == 0:
+            report_url = project_run.start_allure_report_server()
+            if report_url:
+                print(f"Allure report server: {report_url}")
+    if not args.no_notify:
+        selected_platforms = project_run.normalize_platforms(args.platforms)
+        project_run.send_wecom_notification(pytest_code, report_code, report_url, selected_platforms)
+    if pytest_code == 0 and report_code != 0:
+        return report_code
+    return pytest_code
+
+
+def load_project_run_module():
+    run_path = PROJECT_DIR / "run.py"
+    spec = importlib.util.spec_from_file_location("find_autotest_project_run", run_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Could not load project run module: {run_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def print_paths() -> None:
@@ -242,9 +274,12 @@ def build_parser() -> argparse.ArgumentParser:
     config.add_argument("--collect-api-key")
     config.add_argument("--findai-username")
     config.add_argument("--findai-password")
+    config.add_argument("--wecom-webhook")
 
     run = subparsers.add_parser("run", help="Run pytest cases from the bundled project.")
     run.add_argument("--platforms", default="", help="Platforms: xhs,dy,pgy,xt or Chinese aliases.")
+    run.add_argument("--no-report", action="store_true", help="Do not generate Allure HTML report.")
+    run.add_argument("--no-notify", action="store_true", help="Do not send WeCom webhook notification.")
     run.add_argument("pytest_args", nargs=argparse.REMAINDER, help="Extra pytest args after --.")
 
     subparsers.add_parser("where", help="Print installed paths.")

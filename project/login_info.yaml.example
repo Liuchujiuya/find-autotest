@@ -35,3 +35,5 @@ runtime:
       third_id: ''
   device_id: ''
   saved_at: ''
+notification:
+  wecom_webhook: ''
