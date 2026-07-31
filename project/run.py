@@ -1,6 +1,8 @@
 from __future__ import annotations  # 让类型注解延迟解析，兼容不同 Python 版本的注解行为。
 
 import argparse  # 用于解析命令行参数，例如是否打开 Allure 报告。
+import ctypes  # Windows 下用于安全判断运行锁里的进程是否仍然存活。
+import json  # 用于保存运行锁中的 pid、平台和启动时间。
 import os  # 用于给 pytest 子进程设置默认并发和轮询环境变量。
 import shutil  # 用于查找系统 allure 命令，以及删除旧的测试结果目录。
 import socket  # 用于寻找本地 Allure 报告服务可用端口。
@@ -24,6 +26,7 @@ LOGIN_INFO_PATH = ROOT_DIR / "login_info.yaml"  # findai 账号、token 和 base
 EXTENSION_DIR = ROOT_DIR / "extension"  # 已解压 Chrome 插件所在目录，支持 extension/findai_xxx 子目录结构。
 DEFAULT_REPORT_HOST = "127.0.0.1"  # Allure 静态报告服务默认只监听本机。
 DEFAULT_REPORT_PORT = 8765  # Allure 静态报告服务默认端口。
+RUN_LOCK_PATH = ROOT_DIR / "testresult" / "find-autotest-run.lock"  # 防止重复启动导致同一用例创建多次任务。
 
 
 def parse_args() -> argparse.Namespace:
@@ -99,6 +102,68 @@ def run_command(command: list[str], selected_platforms: list[str] | None = None)
     env.setdefault("FINDAI_TASK_INFO_ATTEMPTS", "24")  # 任务完成后默认最多等 2 分钟等待明细落库。
     completed = subprocess.run(command, cwd=ROOT_DIR, env=env)  # 在项目根目录执行命令，避免路径错位。
     return completed.returncode  # 返回命令退出码，0 表示成功。
+
+
+def acquire_run_lock(selected_platforms: list[str]) -> int | None:
+    """获取本次测试运行锁，避免同一项目并发执行导致重复创建任务。"""
+    RUN_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if RUN_LOCK_PATH.exists():
+        lock_info = _read_run_lock()
+        pid = int(lock_info.get("pid") or 0)
+        if pid and _pid_is_running(pid):
+            print(f"已有测试正在运行，拒绝重复启动：pid={pid}, platforms={lock_info.get('platforms')}")
+            return None
+        RUN_LOCK_PATH.unlink(missing_ok=True)  # 旧 pid 不存在时清理陈旧锁。
+    lock_fd = os.open(str(RUN_LOCK_PATH), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    payload = {
+        "pid": os.getpid(),
+        "platforms": selected_platforms,
+        "platforms_text": platform_display_text(selected_platforms),
+        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+    }
+    os.write(lock_fd, json.dumps(payload, ensure_ascii=False).encode("utf-8"))
+    return lock_fd
+
+
+def release_run_lock(lock_fd: int | None) -> None:
+    """释放测试运行锁。"""
+    if lock_fd is None:
+        return
+    try:
+        os.close(lock_fd)
+    except OSError:
+        pass
+    RUN_LOCK_PATH.unlink(missing_ok=True)
+
+
+def _read_run_lock() -> dict:
+    """读取运行锁内容，锁文件损坏时返回空字典。"""
+    try:
+        return json.loads(RUN_LOCK_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def _pid_is_running(pid: int) -> bool:
+    """判断 pid 是否仍在运行。"""
+    if os.name == "nt":
+        process_query_limited_information = 0x1000
+        still_active = 259
+        handle = ctypes.windll.kernel32.OpenProcess(process_query_limited_information, False, pid)
+        if not handle:
+            return False
+        exit_code = ctypes.c_ulong()
+        try:
+            if not ctypes.windll.kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+                return False
+            return exit_code.value == still_active
+        finally:
+            ctypes.windll.kernel32.CloseHandle(handle)
+    try:
+        os.kill(pid, 0)
+        return True
+    except OSError:
+        return False
 
 
 def run_browser_context_sync() -> int:
@@ -216,27 +281,35 @@ def main() -> int:
         print(error)  # 平台名不支持时给出明确提示。
         return 2  # 命令行参数错误。
     print(f"本次选择执行平台：{platform_display_text(selected_platforms)}")  # 显示最终执行平台和顺序。
-    if not args.no_sync_base_url:
-        ensure_findai_base_url()  # 执行用例前自动补齐 findai.base_url，避免接口用例被跳过。
-    if args.sync_browser_context:
-        sync_code = run_browser_context_sync()  # 按需打开浏览器同步平台账号 ID、浏览器设备 ID 和 token。
-        if sync_code != 0:
-            return sync_code  # 同步失败时直接返回同步脚本退出码。
-    warn_missing_build_context()  # 正式执行用例前提示 third_id/device_id 是否齐全。
-    pytest_code = run_pytest(args.pytest_args, clean=not args.no_clean, selected_platforms=selected_platforms)  # 先执行 pytest。
-    report_code = 0  # 默认报告生成成功，用户关闭报告生成时仍可用于通知判断。
-    report_url = ""  # 企业微信通知里的 Allure 本地报告服务地址。
-    if not args.no_report:
-        report_code = generate_allure_report(open_report=args.open_report)  # 再根据本次结果生成 Allure 报告。
-        if report_code == 0:
-            report_url = start_allure_report_server()  # 生成报告后启动本地静态服务，避免 file:// 打开 Allure 路由 404。
-            if report_url:
-                print(f"Allure 本地报告服务：{report_url}")  # 打印可直接访问的报告地址。
-    if not args.no_notify:
-        send_wecom_notification(pytest_code, report_code, report_url, selected_platforms)  # 测试结束后发送企业微信结果通知。
-    if pytest_code == 0 and report_code != 0:
-        return report_code  # 用例成功但报告失败时，返回报告失败码。
-    return pytest_code  # 默认以 pytest 退出码作为 run.py 的退出码。
+    lock_fd = acquire_run_lock(selected_platforms)
+    if lock_fd is None:
+        if not args.no_notify:
+            send_wecom_notification(3, 0, "", selected_platforms)
+        return 3
+    try:
+        if not args.no_sync_base_url:
+            ensure_findai_base_url()  # 执行用例前自动补齐 findai.base_url，避免接口用例被跳过。
+        if args.sync_browser_context:
+            sync_code = run_browser_context_sync()  # 按需打开浏览器同步平台账号 ID、浏览器设备 ID 和 token。
+            if sync_code != 0:
+                return sync_code  # 同步失败时直接返回同步脚本退出码。
+        warn_missing_build_context()  # 正式执行用例前提示 third_id/device_id 是否齐全。
+        pytest_code = run_pytest(args.pytest_args, clean=not args.no_clean, selected_platforms=selected_platforms)  # 先执行 pytest。
+        report_code = 0  # 默认报告生成成功，用户关闭报告生成时仍可用于通知判断。
+        report_url = ""  # 企业微信通知里的 Allure 本地报告服务地址。
+        if not args.no_report:
+            report_code = generate_allure_report(open_report=args.open_report)  # 再根据本次结果生成 Allure 报告。
+            if report_code == 0:
+                report_url = start_allure_report_server()  # 生成报告后启动本地静态服务，避免 file:// 打开 Allure 路由 404。
+                if report_url:
+                    print(f"Allure 本地报告服务：{report_url}")  # 打印可直接访问的报告地址。
+        if not args.no_notify:
+            send_wecom_notification(pytest_code, report_code, report_url, selected_platforms)  # 测试结束后发送企业微信结果通知。
+        if pytest_code == 0 and report_code != 0:
+            return report_code  # 用例成功但报告失败时，返回报告失败码。
+        return pytest_code  # 默认以 pytest 退出码作为 run.py 的退出码。
+    finally:
+        release_run_lock(lock_fd)
 
 
 if __name__ == "__main__":

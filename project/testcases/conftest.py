@@ -52,6 +52,7 @@ def browser_runtime(login_info, selected_test_platforms):
     context.on("close", lambda _: browser_closed_event.set())  # 用户手动关闭浏览器窗口时标记中断。
     try:
         platform_pages, extension_page, token_info, base_url, platform_login_status = _prepare_logged_browser_context(context, login_info, open_extension_page, selected_test_platforms)  # 按用户指定平台准备浏览器，并记录登录门禁结果。
+        _attach_browser_close_watch(context, browser_closed_event)  # 监听页面/浏览器关闭，用户手动关闭时让接口轮询快速失败。
         logged_in_platforms = [platform for platform in selected_test_platforms if platform_login_status.get(platform, True)]  # 未完成扫码登录的小红书/抖音不进入后续用例调度。
         runtime = _wait_platform_runtime_context(extension_page, logged_in_platforms)  # 等待插件从已登录找号平台页拿到 third_id 和 device_id。
         device_id = runtime.get("device_id") or get_findai_device_id_from_extension(extension_page)  # 获取 build 请求体和请求头共用的设备 ID。
@@ -140,6 +141,14 @@ def _make_session_user_data_dir() -> Path:
     if configured:
         return Path(configured)  # 如果指定了目录，就按调用方要求使用。
     return Path("testresult/browser_user_data") / f"session_{os.getpid()}_{uuid4().hex[:8]}"  # 默认每次执行使用全新目录。
+
+def _attach_browser_close_watch(context, browser_closed_event: threading.Event) -> None:
+    """监听当前浏览器上下文里的页面关闭事件。"""
+    for page in context.pages:
+        try:
+            page.on("close", lambda _: browser_closed_event.set())
+        except Exception:
+            continue
 
 
 def _prepare_logged_browser_context(context, login_info, open_extension_page, selected_platforms: list[str]):
