@@ -20,8 +20,7 @@ if (-not $SkipBrowserInstall) {
 }
 
 $addData = @(
-    "--add-data", "$root\project;project",
-    "--add-data", "$root\skills;skills"
+    "--add-data", "$root\project;project"
 )
 
 if (Test-Path -LiteralPath $browserPath) {
@@ -53,12 +52,14 @@ if (Test-Path -LiteralPath $browserPath) {
 Copy-Item -LiteralPath (Join-Path $root "project\login_info.yaml.example") -Destination (Join-Path $distRoot "config.yaml") -Force
 New-Item -ItemType Directory -Force -Path (Join-Path $distRoot "extension") | Out-Null
 New-Item -ItemType File -Force -Path (Join-Path $distRoot "extension\.gitkeep") | Out-Null
+Compress-Archive -Path (Join-Path $distRoot "bin"), (Join-Path $distRoot "config.yaml"), (Join-Path $distRoot "extension") -DestinationPath (Join-Path $distRoot "find-autotest-windows.zip") -Force
 
 Write-Host ""
 Write-Host "Release generated:"
 Write-Host "  $distRoot\bin\find-autotest.exe"
 Write-Host "  $distRoot\config.yaml"
 Write-Host "  $distRoot\extension\"
+Write-Host "  $distRoot\find-autotest-windows.zip"
 Write-Host ""
 Write-Host "User quick start:"
 Write-Host "  .\bin\find-autotest.exe install"

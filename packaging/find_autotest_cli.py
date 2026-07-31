@@ -5,6 +5,7 @@ import importlib.util
 import os
 import shutil
 import sys
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -12,9 +13,8 @@ import yaml
 
 
 APP_HOME = Path.home() / ".find-autotest"
-PROJECT_DIR = APP_HOME / "project"
-SKILL_NAME = "find-autotest"
-CODEX_SKILL_DIR = Path.home() / ".codex" / "skills" / SKILL_NAME
+RUNTIME_ROOT = Path(os.getenv("LOCALAPPDATA") or tempfile.gettempdir()) / "find-autotest"
+PROJECT_DIR = RUNTIME_ROOT / "project"
 
 
 def resource_root() -> Path:
@@ -81,10 +81,6 @@ def bundled_project_dir() -> Path:
     return resource_root() / "project"
 
 
-def bundled_skill_dir() -> Path:
-    return resource_root() / "skills" / SKILL_NAME
-
-
 def bundled_config_example() -> Path:
     return bundled_project_dir() / "login_info.yaml.example"
 
@@ -109,10 +105,6 @@ def install_resources(force: bool = False) -> None:
     PROJECT_DIR.joinpath("testresult").mkdir(parents=True, exist_ok=True)
     sync_external_extension()
 
-    CODEX_SKILL_DIR.parent.mkdir(parents=True, exist_ok=True)
-    if force or not CODEX_SKILL_DIR.exists():
-        copy_tree(bundled_skill_dir(), CODEX_SKILL_DIR, overwrite=True)
-
     if not config_path.exists():
         config_path.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(bundled_config_example(), config_path)
@@ -127,7 +119,7 @@ def sync_config_to_project() -> None:
 
 
 def ensure_installed() -> None:
-    if not PROJECT_DIR.exists() or not CODEX_SKILL_DIR.exists() or not exe_config_path().exists():
+    if not PROJECT_DIR.exists() or not exe_config_path().exists():
         install_resources(force=False)
     sync_config_to_project()
 
@@ -256,15 +248,15 @@ def print_paths() -> None:
     print(f"Project: {PROJECT_DIR}")
     print(f"Extension: {PROJECT_DIR / 'extension'}")
     print(f"Release extension source: {external_extension_dir()}")
-    print(f"Skill: {CODEX_SKILL_DIR}")
+    print(f"Runtime: {PROJECT_DIR}")
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="find-autotest", description="FindAI autotest bundled CLI.")
     subparsers = parser.add_subparsers(dest="command")
 
-    install = subparsers.add_parser("install", help="Install bundled project and Codex skill.")
-    install.add_argument("--force", action="store_true", help="Overwrite installed project and skill resources.")
+    install = subparsers.add_parser("install", help="Prepare the bundled runtime files.")
+    install.add_argument("--force", action="store_true", help="Overwrite the local runtime files.")
 
     config = subparsers.add_parser("config", help="Update config.yaml safely.")
     config.add_argument("--pgy-username")

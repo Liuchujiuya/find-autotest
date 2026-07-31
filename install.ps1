@@ -1,94 +1,46 @@
 param(
-    [string]$RepoUrl = "https://github.com/Liuchujiuya/find-autotest.git",
-    [string]$Ref = "main",
-    [string]$ProjectDir = "D:\apitest_dev",
-    [string]$SkillName = "find-autotest",
-    [switch]$InstallDeps,
+    [string]$Repo = "Liuchujiuya/find-autotest",
+    [string]$InstallDir = (Join-Path $env:USERPROFILE ".find-autotest"),
     [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
+$archiveUrl = "https://github.com/$Repo/releases/latest/download/find-autotest-windows.zip"
+$tempRoot = Join-Path $env:TEMP ("find-autotest-" + [guid]::NewGuid().ToString("N"))
 
-function Write-Step([string]$Message) {
-    Write-Host ""
-    Write-Host ">>> $Message" -ForegroundColor Cyan
-}
+try {
+    New-Item -ItemType Directory -Force -Path $tempRoot | Out-Null
+    $archivePath = Join-Path $tempRoot "find-autotest-windows.zip"
+    Invoke-WebRequest -Uri $archiveUrl -OutFile $archivePath
+    Expand-Archive -LiteralPath $archivePath -DestinationPath $tempRoot -Force
 
-function Resolve-SourceRoot {
-    $localRoot = $PSScriptRoot
-    if ($localRoot -and (Test-Path -LiteralPath (Join-Path $localRoot "skills\$SkillName")) -and (Test-Path -LiteralPath (Join-Path $localRoot "project"))) {
-        return $localRoot
+    foreach ($name in @("bin", "config.yaml", "extension")) {
+        $source = Join-Path $tempRoot $name
+        if (-not (Test-Path -LiteralPath $source)) {
+            throw "Release archive is missing: $name"
+        }
     }
 
-    if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-        throw "git is not installed or not in PATH."
+    New-Item -ItemType Directory -Force -Path $InstallDir | Out-Null
+    foreach ($name in @("bin", "extension")) {
+        $source = Join-Path $tempRoot $name
+        $destination = Join-Path $InstallDir $name
+        if (Test-Path -LiteralPath $destination) {
+            Remove-Item -LiteralPath $destination -Recurse -Force
+        }
+        Copy-Item -LiteralPath $source -Destination $destination -Recurse -Force
     }
 
-    $tempRoot = Join-Path $env:TEMP ("find-autotest-" + [guid]::NewGuid().ToString("N"))
-    Write-Step "Clone repository"
-    git clone --branch $Ref --depth 1 $RepoUrl $tempRoot
-    return $tempRoot
-}
-
-function Copy-DirectoryContent([string]$Source, [string]$Destination) {
-    if (-not (Test-Path -LiteralPath $Source)) {
-        throw "Source path not found: $Source"
+    $configSource = Join-Path $tempRoot "config.yaml"
+    $configDestination = Join-Path $InstallDir "config.yaml"
+    if ($Force -or -not (Test-Path -LiteralPath $configDestination)) {
+        Copy-Item -LiteralPath $configSource -Destination $configDestination -Force
     }
-    New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-    Copy-Item -LiteralPath (Join-Path $Source "*") -Destination $Destination -Recurse -Force
-}
 
-$sourceRoot = Resolve-SourceRoot
-$skillSource = Join-Path $sourceRoot "skills\$SkillName"
-$projectSource = Join-Path $sourceRoot "project"
-$skillDestRoot = Join-Path $env:USERPROFILE ".codex\skills"
-$skillDest = Join-Path $skillDestRoot $SkillName
-
-Write-Step "Install Codex skill"
-New-Item -ItemType Directory -Force -Path $skillDestRoot | Out-Null
-if ((Test-Path -LiteralPath $skillDest) -and $Force) {
-    Remove-Item -LiteralPath $skillDest -Recurse -Force
-}
-Copy-Item -LiteralPath $skillSource -Destination $skillDestRoot -Recurse -Force
-Write-Host "Skill installed: $skillDest"
-
-Write-Step "Install autotest project"
-New-Item -ItemType Directory -Force -Path $ProjectDir | Out-Null
-foreach ($name in @("bases", "scripts", "testcases", "testdata", "tools")) {
-    Copy-DirectoryContent -Source (Join-Path $projectSource $name) -Destination (Join-Path $ProjectDir $name)
-}
-foreach ($name in @("pytest.ini", "requirements.txt", "run.py")) {
-    Copy-Item -LiteralPath (Join-Path $projectSource $name) -Destination (Join-Path $ProjectDir $name) -Force
-}
-New-Item -ItemType Directory -Force -Path (Join-Path $ProjectDir "extension"), (Join-Path $ProjectDir "testresult") | Out-Null
-
-$exampleConfig = Join-Path $projectSource "login_info.yaml.example"
-$installedExampleConfig = Join-Path $ProjectDir "login_info.yaml.example"
-$installedConfig = Join-Path $ProjectDir "login_info.yaml"
-Copy-Item -LiteralPath $exampleConfig -Destination $installedExampleConfig -Force
-if (-not (Test-Path -LiteralPath $installedConfig)) {
-    Copy-Item -LiteralPath $exampleConfig -Destination $installedConfig -Force
-    Write-Host "Created config from example: $installedConfig"
-} else {
-    Write-Host "Existing config kept: $installedConfig"
-}
-
-if ($InstallDeps) {
-    Write-Step "Install Python dependencies"
-    $venvPython = Join-Path $ProjectDir ".venv\Scripts\python.exe"
-    if (-not (Test-Path -LiteralPath $venvPython)) {
-        python -m venv (Join-Path $ProjectDir ".venv")
+    Write-Host "Installed Find Autotest: $InstallDir"
+    Write-Host "Run: & '$InstallDir\bin\find-autotest.exe' where"
+} finally {
+    if (Test-Path -LiteralPath $tempRoot) {
+        Remove-Item -LiteralPath $tempRoot -Recurse -Force
     }
-    & $venvPython -m pip install -r (Join-Path $ProjectDir "requirements.txt")
-    & $venvPython -m playwright install chromium
 }
-
-Write-Step "Done"
-Write-Host "Next:"
-Write-Host "1. Put the unpacked FindAI Chrome extension into: $(Join-Path $ProjectDir 'extension')"
-Write-Host "2. Update accounts/API key with:"
-Write-Host ('   {0}\.venv\Scripts\python.exe {1}\scripts\update_login_info.py --pgy-username "..." --pgy-password "..."' -f $ProjectDir, $skillDest)
-Write-Host ('   {0}\.venv\Scripts\python.exe {1}\scripts\update_login_info.py --xt-username "..." --xt-password "..."' -f $ProjectDir, $skillDest)
-Write-Host ('   {0}\.venv\Scripts\python.exe {1}\scripts\update_login_info.py --collect-api-key "..."' -f $ProjectDir, $skillDest)
-Write-Host "3. Run tests:"
-Write-Host ('   {0}\.venv\Scripts\python.exe {0}\run.py --platforms pgy,xt' -f $ProjectDir)
