@@ -10,6 +10,7 @@ import subprocess  # 用于调用 pytest 和 Allure CLI。
 import sys  # 用于获取当前 Python 解释器路径和返回进程退出码。
 import time  # 用于给本地报告服务短暂启动时间。
 from pathlib import Path  # 用于统一处理 Windows 路径和相对路径。
+from uuid import uuid4  # 用于在 pytest 未写入结果时生成唯一的兜底 Allure 记录。
 
 import requests  # 用于调用企业微信群机器人 webhook。
 
@@ -192,9 +193,7 @@ def generate_allure_report(open_report: bool) -> int:
     if not allure_command:
         print("未找到 Allure CLI，已跳过 HTML 报告生成。")  # 没有 CLI 时只保留 pytest 生成的原始结果。
         return 0  # 跳过报告生成不影响 pytest 执行结果。
-    if not ALLURE_RESULTS_DIR.exists():
-        print("未找到 allure-results，已跳过 HTML 报告生成。")  # 没有结果目录时无法生成报告。
-        return 0  # 没有结果时直接返回。
+    ensure_allure_result_for_interrupted_session()  # pytest 未写入任何结果时补一条中断失败记录，保证仍可生成 HTML 报告。
     generate_code = run_command(
         [
             allure_command,  # Allure CLI 可执行文件。
@@ -211,6 +210,29 @@ def generate_allure_report(open_report: bool) -> int:
         return run_command([allure_command, "open", str(ALLURE_REPORT_DIR)])  # 用户要求时启动 Allure 本地报告服务。
     print(f"Allure 报告已生成：{ALLURE_REPORT_DIR}")  # 不自动打开时打印报告目录。
     return 0  # 报告生成成功。
+
+
+def ensure_allure_result_for_interrupted_session() -> None:
+    """确保 Allure 至少有一条结果，使中断的测试也能生成可查看的报告。"""
+    ALLURE_RESULTS_DIR.mkdir(parents=True, exist_ok=True)  # pytest 可能在初始化前被中断，此时需要补建目录。
+    if any(ALLURE_RESULTS_DIR.glob("*-result.json")):
+        return  # 已有 pytest 写入的结果时绝不覆盖或追加伪造结果。
+    now = int(time.time() * 1000)  # Allure 时间字段使用毫秒时间戳。
+    result = {
+        "uuid": uuid4().hex,
+        "historyId": "find-autotest-interrupted-session",
+        "fullName": "find-autotest.interrupted-session",
+        "name": "测试会话中断",
+        "status": "broken",
+        "statusDetails": {"message": "测试在生成完整用例结果前中断或超时。"},
+        "stage": "finished",
+        "start": now,
+        "stop": now,
+        "labels": [{"name": "suite", "value": "FindAI 自动化测试"}],
+    }
+    result_path = ALLURE_RESULTS_DIR / f"{result['uuid']}-result.json"
+    result_path.write_text(json.dumps(result, ensure_ascii=False), encoding="utf-8")
+    print("pytest 未生成 Allure 原始结果；已写入“测试会话中断”记录并继续生成报告。")
 
 
 def start_allure_report_server() -> str:
