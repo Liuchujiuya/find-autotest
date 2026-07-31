@@ -27,7 +27,9 @@ def launch_chromium_with_extension(
     context = playwright.chromium.launch_persistent_context(
         user_data_dir=str(Path(user_data_dir).resolve()),  # 使用持久化用户目录保存平台和插件登录态。
         headless=headless,  # 插件调试通常需要有头模式，默认 False。
+        no_viewport=True,  # 不使用 Playwright 默认固定视口，让浏览器窗口真实最大化后页面也占满窗口。
         args=[
+            "--start-maximized",  # 启动 Chromium 时最大化窗口，方便用户观察自动登录过程。
             f"--disable-extensions-except={extension_path}",  # 仅启用当前待测插件，减少其它扩展干扰。
             f"--load-extension={extension_path}",  # 加载解压后的 findai 插件目录。
         ],
