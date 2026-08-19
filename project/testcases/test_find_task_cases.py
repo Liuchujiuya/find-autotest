@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+import threading
 import traceback
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -76,8 +77,17 @@ if PLATFORM_PARALLEL_ENABLED:
         configured_workers = int(os.getenv("FINDAI_PLATFORM_WORKERS", str(len(grouped_cases) or 1)))
         max_workers = min(configured_workers, len(grouped_cases)) or 1
         with ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="findai-platform") as executor:
+            collect_platform_count = sum(platform in COLLECT_TASK_PLATFORMS for platform in grouped_cases)
+            collect_creation_barrier = threading.Barrier(collect_platform_count) if collect_platform_count > 1 else None
             futures = {
-                executor.submit(run_platform_cases, platform, cases, browser_runtime, findai_runtime_context): platform
+                executor.submit(
+                    run_platform_cases,
+                    platform,
+                    cases,
+                    browser_runtime,
+                    findai_runtime_context,
+                    collect_creation_barrier,
+                ): platform
                 for platform, cases in grouped_cases.items()
             }
             for future in as_completed(futures):
@@ -131,9 +141,15 @@ def case_id_sort_key(case_data: dict[str, Any]) -> tuple[str, int, str]:
     return case_id, 0, case_id
 
 
-def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runtime, findai_runtime_context):
+def run_platform_cases(
+    platform: str,
+    cases: list[dict[str, Any]],
+    browser_runtime,
+    findai_runtime_context,
+    collect_creation_barrier: threading.Barrier | None = None,
+):
     if platform in COLLECT_TASK_PLATFORMS:
-        return run_collect_platform_cases(platform, cases, browser_runtime, findai_runtime_context)
+        return run_collect_platform_cases(platform, cases, browser_runtime, findai_runtime_context, collect_creation_barrier)
 
     case_state = {"variables": {}, "results": {}}
     thread_api = create_thread_find_task_api(browser_runtime)
@@ -167,43 +183,103 @@ def run_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runti
     return errors
 
 
-def run_collect_platform_cases(platform: str, cases: list[dict[str, Any]], browser_runtime, findai_runtime_context):
-    """并发执行同一采集平台的独立用例，使全部采集任务尽快创建。"""
+def run_collect_platform_cases(
+    platform: str,
+    cases: list[dict[str, Any]],
+    browser_runtime,
+    findai_runtime_context,
+    collect_creation_barrier: threading.Barrier | None,
+):
+    """先并发创建全部采集任务，再统一查询状态和执行断言。"""
     errors = []
     workers = max(1, min(len(cases), int(os.getenv("FINDAI_COLLECT_CASE_WORKERS", str(len(cases) or 1)))))
-    with allure.step(f"{platform} 平台并发创建并执行 {len(cases)} 条采集用例"):
-        print(f"[{platform}] submit all {len(cases)} collect cases for concurrent task creation.")
+    created_cases = []
+    with allure.step(f"{platform} 阶段1：并发创建 {len(cases)} 条采集任务"):
+        print(f"[{platform}] phase 1: submit all {len(cases)} collect cases for concurrent task creation.")
         with ThreadPoolExecutor(max_workers=workers, thread_name_prefix=f"findai-{platform}-collect") as executor:
             futures = {
-                executor.submit(run_one_collect_case, case_data, browser_runtime, findai_runtime_context): case_data
+                executor.submit(create_collect_task_case, case_data, browser_runtime): case_data
                 for case_data in cases
             }
             for future in as_completed(futures):
                 case_data = futures[future]
+                try:
+                    created_cases.append(future.result())
+                    print(f"[{platform}] created {case_data['id']}")
+                except BaseException as error:
+                    if isinstance(error, (KeyboardInterrupt, SystemExit)):
+                        raise
+                    errors.append(make_case_error(case_data, error))
+                    print(f"[{platform}] failed {case_data['id']}: {error}")
+                    attach_json(f"{platform} {case_data['id']} creation failure", errors[-1])
+
+    if collect_creation_barrier:
+        with allure.step("阶段1同步：等待小红书和抖音全部采集任务创建完成"):
+            print(f"[{platform}] waiting for all selected collect-platform tasks to be created.")
+            try:
+                collect_creation_barrier.wait()
+            except threading.BrokenBarrierError as error:
+                raise RuntimeError("Collect-task creation barrier was broken before all platforms finished creating tasks.") from error
+
+    if not created_cases:
+        return errors
+
+    with allure.step(f"{platform} 阶段2：并发查询状态并断言 {len(created_cases)} 条采集任务"):
+        print(f"[{platform}] phase 2: all collect tasks are created; start status polling and assertions.")
+        with ThreadPoolExecutor(max_workers=workers, thread_name_prefix=f"findai-{platform}-verify") as executor:
+            futures = {
+                executor.submit(complete_collect_task_case, created_case): created_case
+                for created_case in created_cases
+            }
+            for future in as_completed(futures):
+                created_case = futures[future]
+                case_data = created_case["case_data"]
                 try:
                     future.result()
                     print(f"[{platform}] passed {case_data['id']}")
                 except BaseException as error:
                     if isinstance(error, (KeyboardInterrupt, SystemExit)):
                         raise
-                    error_info = {
-                        "case_id": case_data["id"],
-                        "title": case_data["title"],
-                        "traceback": "".join(traceback.format_exception(type(error), error, error.__traceback__)),
-                    }
-                    errors.append(error_info)
+                    errors.append(make_case_error(case_data, error))
                     print(f"[{platform}] failed {case_data['id']}: {error}")
-                    attach_json(f"{platform} {case_data['id']} failure", error_info)
+                    attach_json(f"{platform} {case_data['id']} verification failure", errors[-1])
     return errors
 
 
-def run_one_collect_case(case_data: dict[str, Any], browser_runtime, findai_runtime_context) -> None:
-    """执行一个采集用例；每个线程使用独立 API 客户端和状态，避免并发共享数据。"""
+def make_case_error(case_data: dict[str, Any], error: BaseException) -> dict[str, str]:
+    """把线程异常标准化为平台汇总报告需要的结构。"""
+    return {
+        "case_id": case_data["id"],
+        "title": case_data["title"],
+        "traceback": "".join(traceback.format_exception(type(error), error, error.__traceback__)),
+    }
+
+
+def create_collect_task_case(case_data: dict[str, Any], browser_runtime) -> dict[str, Any]:
+    """只执行采集任务创建阶段，确保全部任务能尽快入队。"""
     case_state = {"variables": {}, "results": {}, "_result_assertion_phase": False}
     find_task_api = create_thread_find_task_api(browser_runtime)
     with allure.step(f"{case_data['id']} {case_data['title']}"):
         print(f"[{case_data['platform']}] start {case_data['id']} {case_data['title']}")
-        execute_find_task_case(case_data, find_task_api, findai_runtime_context, case_state)
+        collect_meta = create_collect_task(case_data, find_task_api, case_state)
+    return {
+        "case_data": case_data,
+        "find_task_api": find_task_api,
+        "case_state": case_state,
+        "collect_meta": collect_meta,
+    }
+
+
+def complete_collect_task_case(created_case: dict[str, Any]) -> None:
+    """在全部采集任务创建完成后，查询当前任务状态、详情并执行断言。"""
+    case_data = created_case["case_data"]
+    with allure.step(f"{case_data['id']} {case_data['title']}"):
+        complete_collect_task(
+            case_data,
+            created_case["find_task_api"],
+            created_case["case_state"],
+            created_case["collect_meta"],
+        )
 
 
 def format_platform_failures(errors: dict[str, list[dict[str, str]]]) -> str:
@@ -393,7 +469,13 @@ def execute_find_task_case(case_data, find_task_api, findai_runtime_context, cas
 
 
 def execute_collect_task_case(case_data, find_task_api, case_state):
-    """执行小红书/抖音采集任务用例。"""
+    """兼容非平台并行模式：按单条用例完整执行采集任务。"""
+    collect_meta = create_collect_task(case_data, find_task_api, case_state)
+    complete_collect_task(case_data, find_task_api, case_state, collect_meta)
+
+
+def create_collect_task(case_data, find_task_api, case_state) -> dict[str, Any]:
+    """准备请求并调用创建接口，返回后续查询任务所需的任务标识。"""
     with allure.step("步骤1：准备采集任务请求数据"):
         payload = render_template(case_data["request"]["json"], case_state["variables"])
         assert_no_unresolved_variables(payload)
@@ -428,7 +510,11 @@ def execute_collect_task_case(case_data, find_task_api, case_state):
             assert build_result.get("code") in (None, 1)
         if not collect_meta.get("fdNo") or not collect_meta.get("id"):
             raise AssertionError(f"Collect build response missing fdNo/id: {build_result}")
+    return collect_meta
 
+
+def complete_collect_task(case_data, find_task_api, case_state, collect_meta: dict[str, Any]) -> None:
+    """查询已创建采集任务的结果，并完成保存和断言。"""
     with allure.step("步骤3：调用采集任务状态接口 /api/collectTask/list 等待任务完成"):
         task_status = find_task_api.get_collect_task_status(collect_meta["fdNo"], case_data["platform"])
         attach_json(
