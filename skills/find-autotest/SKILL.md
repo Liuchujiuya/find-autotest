@@ -1,122 +1,77 @@
 ---
 name: find-autotest
-description: Run and maintain the local FindAI automated testing project for platform-specific tests and configuration updates. Use when the user asks to execute, update, debug, or generate FindAI pytest/playwright/request/allure tests for 蒲公英, 星图, 小红书, or 抖音; when they specify which platform(s) to test; when browser pages must open in platform priority order; or when they need to modify login_info.yaml values such as 蒲公英/星图 accounts, FindAI account, or 小红书/抖音 API keys.
+description: Run and maintain FindAI automated tests for 蒲公英, 星图, 小红书, and 抖音, using the installed Windows CLI by default.
 ---
 
 # Find Autotest
 
-## Project
+## Default Runtime
 
-Use the local project at `D:\apitest_dev`.
-
-The project runs Python + pytest + Playwright + requests + Allure tests for four platforms:
-
-- `xhs` / `xiaohongshu` / `小红书`
-- `dy` / `douyin` / `抖音`
-- `pgy` / `pugongying` / `蒲公英`
-- `xt` / `xingtu` / `星图`
-
-When a user specifies platforms, always normalize and open them in this priority order:
-
-`小红书 > 抖音 > 蒲公英 > 星图`
-
-## Commands
-
-## Mandatory preflight — do this before announcing or starting a test
-
-For every request to run tests, perform these checks first. Do **not** say that testing has started, open browser pages, or run the CLI until all required checks pass.
-
-1. Check `%USERPROFILE%\.find-autotest\extension` for an unpacked plugin, identified by `manifest.json` (a ZIP file alone is not sufficient).
-2. If `manifest.json` is absent, stop and tell the user: `请将待测试插件安装包解压到 %USERPROFILE%\.find-autotest\extension，确保该目录或其一级子目录中包含 manifest.json，然后再开始测试。`
-3. If the requested platforms include 小红书 (`xhs`) or 抖音 (`dy`), read the configured API key before running. If it is blank, stop and ask the user for the shared collect API key; update it with `find-autotest config --collect-api-key "..."` before testing.
-4. Open the selected platform pages in priority order. After all selected platform pages are ready, always open the FindAI plugin login page last and wait until FindAI login has produced a token before running any test case. This applies to every platform selection, including only 小红书 or 抖音.
-5. Only after these checks and the FindAI login complete may the test command be run. These checks apply even when the user asks to run all four platforms.
-
-## Account configuration
-
-Users can provide account credentials for 蒲公英、星图 and FindAI, which are saved in `config.yaml`:
+Use the installed CLI by default. Do not invoke `D:\apitest_dev`, its Python environment, or its `login_info.yaml` unless the user explicitly asks for development-mode debugging or code changes.
 
 ```powershell
-find-autotest config --pgy-username "..." --pgy-password "..." --xt-username "..." --xt-password "..." --findai-username "..." --findai-password "..."
+$findAutotest = Join-Path $env:USERPROFILE ".find-autotest\bin\find-autotest.exe"
+& $findAutotest run --platforms xhs,dy
 ```
 
-Only update fields that the user explicitly provides. Never print passwords. If an account is not configured, do not attempt to auto-fill its login form; leave the opened platform or plugin login page for the user to complete manually.
+The installed CLI stores user configuration and the unpacked plugin in `%USERPROFILE%\.find-autotest`:
 
-小红书和抖音始终使用用户手动扫码登录，不读取或填写平台账号密码。蒲公英和星图仅在用户明确配置了用户名和密码后才自动登录；新安装或账号为空时只打开登录页并等待用户手动完成登录。
+```text
+.find-autotest/
+  bin/find-autotest.exe
+  config.yaml
+  extension/
+```
 
-Before running any live test, check that the FindAI Chrome extension package has been unpacked into `%USERPROFILE%\.find-autotest\extension` and that this directory or one of its direct child directories contains `manifest.json`. If not, stop and tell the user the full `%USERPROFILE%\.find-autotest\extension` path.
+The installed runtime is `%LOCALAPPDATA%\find-autotest\project`; do not edit it directly because the CLI manages it.
 
-Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
+## Test Setup
+
+Before every live test, check `%USERPROFILE%\.find-autotest\extension` for an unpacked plugin. It must contain `manifest.json` directly or in a first-level child folder. If it is missing, stop and say:
+
+`请将待测试插件安装包解压到 %USERPROFILE%\.find-autotest\extension，确保该目录或其一级子目录中包含 manifest.json，然后再开始测试。`
+
+For 小红书 (`xhs`) or 抖音 (`dy`), require the shared collection API key before running:
+
+```powershell
+& $findAutotest config --collect-api-key "..."
+```
+
+Open selected platforms in this order: `小红书 > 抖音 > 蒲公英 > 星图`. Open the FindAI plugin login page last, and wait for a valid token before running cases.
+
+小红书和抖音始终由用户手动扫码登录，不读取或填写平台账号密码。蒲公英和星图只有在用户明确配置用户名和密码后才自动填写；账号为空时只打开登录页并等待手动登录。
+
+## Commands
 
 Run all platforms:
 
 ```powershell
-D:\apitest_dev\.venv\Scripts\python.exe D:\apitest_dev\run.py
+& $findAutotest run
 ```
 
 Run selected platforms:
 
 ```powershell
-D:\apitest_dev\.venv\Scripts\python.exe D:\apitest_dev\run.py --platforms 小红书,抖音
-D:\apitest_dev\.venv\Scripts\python.exe D:\apitest_dev\run.py --platforms pgy,xt
+& $findAutotest run --platforms 小红书,抖音
+& $findAutotest run --platforms pgy,xt
 ```
 
-Regenerate test data from the latest Excel file before running, when the user says the cases changed:
+Configure only values explicitly supplied by the user:
 
 ```powershell
-cd D:\apitest_dev
-D:\apitest_dev\.venv\Scripts\python.exe D:\apitest_dev\scripts\import_find_cases_v2.py
+& $findAutotest config --pgy-username "..." --pgy-password "..." --xt-username "..." --xt-password "..." --findai-username "..." --findai-password "..."
 ```
 
-## Configuration
+Do not print passwords, tokens, or API keys. Keep the shared collection API key identical for 小红书 and 抖音.
 
-When the user asks to modify accounts, passwords, or API keys, update `D:\apitest_dev\login_info.yaml`.
+## Runtime Notes
 
-Use the bundled helper because it creates a timestamped backup and prints only masked secrets:
+蒲公英和星图 use `/api/smartPluginTask/build`; they require the plugin token, `base_url`, `device_id`, and platform `third_id`.
 
-```powershell
-D:\apitest_dev\.venv\Scripts\python.exe C:\Users\Administrator\.codex\skills\find-autotest\scripts\update_login_info.py --pgy-username "..." --pgy-password "..."
-D:\apitest_dev\.venv\Scripts\python.exe C:\Users\Administrator\.codex\skills\find-autotest\scripts\update_login_info.py --xt-username "..." --xt-password "..."
-D:\apitest_dev\.venv\Scripts\python.exe C:\Users\Administrator\.codex\skills\find-autotest\scripts\update_login_info.py --collect-api-key "..."
-```
+小红书和抖音 use `/api/collectTask/buildCollectTask`; they require the shared collection API key and do not require `device_id` or `third_id`.
 
-Supported fields:
+Allure HTML reports are saved under `%LOCALAPPDATA%\find-autotest\project\testresult\allure-report`. The local report URL is accessible only from the test-running computer while its local HTTP service is still running.
 
-- `platforms.pugongying.username`
-- `platforms.pugongying.password`
-- `platforms.xingtu.username`
-- `platforms.xingtu.password`
-- `platforms.xiaohongshu.api_key` and `platforms.douyin.api_key`, written together with `--collect-api-key`
-- `platforms.xiaohongshu.api_key`
-- `platforms.douyin.api_key`
-- `findai.username`
-- `findai.password`
+## Development Mode
 
-小红书 and 抖音 use the same API key. Prefer `--collect-api-key` so both `platforms.xiaohongshu.api_key` and `platforms.douyin.api_key` stay identical. Keep `--xhs-api-key` and `--dy-api-key` only for backward-compatible manual fixes.
-
-Do not print full passwords, tokens, or API keys back to the user. If the user provides only some fields, update only those fields and leave the rest unchanged.
-
-## Runtime Rules
-
-`run.py --platforms ...` sets `FINDAI_TEST_PLATFORMS` for pytest. `testcases/conftest.py` opens only the requested browser pages, and `testcases/test_find_task_cases.py` filters `testdata/find_task_cases.yaml` to those platforms.
-
-蒲公英 and 星图 use `/api/smartPluginTask/build`; they require the FindAI plugin login plus `base_url`, `token`, `device_id`, and platform `third_id`.
-
-小红书 and 抖音 use `/api/collectTask/buildCollectTask`; they open the official websites for scan login but do not require `device_id` or `third_id`. They share one API key, stored in both locations in `login_info.yaml`:
-
-- `platforms.xiaohongshu.api_key`
-- `platforms.douyin.api_key`
-
-The collect API request header must include:
-
-```text
-Authorization: key=<api_key>
-```
-
-## Reports
-
-Allure raw results are written to `D:\apitest_dev\testresult\allure-results`.
-
-The generated HTML report is written to `D:\apitest_dev\testresult\allure-report`.
-
-Do not run live tests unless the user asks to execute them; these tests create real FindAI tasks.
+Only when the user explicitly requests work on the source project, use `D:\apitest_dev`. In that mode, use `D:\apitest_dev\extension`, `D:\apitest_dev\login_info.yaml`, and `D:\apitest_dev\.venv\Scripts\python.exe D:\apitest_dev\run.py`.
