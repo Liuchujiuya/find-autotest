@@ -56,7 +56,13 @@ def browser_runtime(login_info, selected_test_platforms):
         logged_in_platforms = [platform for platform in selected_test_platforms if platform_login_status.get(platform, True)]  # 未完成扫码登录的小红书/抖音不进入后续用例调度。
         runtime = _wait_platform_runtime_context(extension_page, logged_in_platforms)  # 等待插件从已登录找号平台页拿到 third_id 和 device_id。
         device_id = runtime.get("device_id") or get_findai_device_id_from_extension(extension_page)  # 获取 build 请求体和请求头共用的设备 ID。
-        token_info = _normalize_token_info(get_findai_token_from_extension(extension_page) or token_info)  # 以插件 storage 中最终 token 为准，并兼容纯字符串 token。
+        stored_token_info = _normalize_token_info(get_findai_token_from_extension(extension_page))  # 读取插件 storage 当前保存的 token 对象。
+        if _extract_token(stored_token_info):  # 只有 storage 中实际含 token 字符串时，才覆盖前置登录获得的 token。
+            token_info = stored_token_info  # 优先使用插件当前会话的有效 token。
+        else:
+            token_info = _normalize_token_info(token_info)  # storage 只有空结构时保留前置登录或接口兜底得到的有效 token。
+        if not _extract_token(token_info):  # 两个来源都没有有效 token 时，再执行一次带接口兜底的获取流程。
+            token_info = _normalize_token_info(_wait_findai_token(extension_page, login_info, base_url))  # 确保后续智能找号接口使用真实 token。
         token = _extract_token(token_info)  # 提取 access_token。
         version = get_extension_version(extension_page) or "1.4.3"  # 从插件读取版本号，失败时兜底旧版本号。
         _assert_runtime_ready(base_url, token, device_id, runtime, logged_in_platforms)  # 只校验已登录且会真正执行用例的平台所需参数。
@@ -235,7 +241,7 @@ def _wait_findai_token(extension_page, login_info: dict, base_url: str) -> dict:
     elapsed = 0  # 已等待秒数。
     while elapsed <= timeout_seconds:
         token_info = get_findai_token_from_extension(extension_page)  # 从插件 storage 读取 token。
-        if token_info:
+        if _extract_token(token_info):
             return token_info  # 读取到 token 后返回。
         extension_page.wait_for_timeout(1000)  # 每秒轮询一次。
         elapsed += 1  # 更新已等待秒数。
