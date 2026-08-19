@@ -74,6 +74,7 @@ if PLATFORM_PARALLEL_ENABLED:
             pytest.skip("No selected platform is logged in. Scan-login platform cases were skipped by login gate.")
 
         errors = {}
+        execution_state = {"completed_cases": [], "lock": threading.Lock()}  # 跨平台线程共享已完成用例清单，浏览器中断时也能保留报告记录。
         configured_workers = int(os.getenv("FINDAI_PLATFORM_WORKERS", str(len(grouped_cases) or 1)))
         max_workers = min(configured_workers, len(grouped_cases)) or 1
         with ThreadPoolExecutor(max_workers=max_workers, thread_name_prefix="findai-platform") as executor:
@@ -87,6 +88,7 @@ if PLATFORM_PARALLEL_ENABLED:
                     browser_runtime,
                     findai_runtime_context,
                     collect_creation_barrier,
+                    execution_state,
                 ): platform
                 for platform, cases in grouped_cases.items()
             }
@@ -99,7 +101,23 @@ if PLATFORM_PARALLEL_ENABLED:
                 except BaseException:
                     errors[platform] = [{"case_id": "__platform_runner__", "traceback": traceback.format_exc()}]
 
-        if errors:
+        completed_cases = execution_state["completed_cases"]  # 读取所有平台在中断前已成功完成的用例。
+        attach_json(
+            "测试会话执行汇总",
+            {
+                "浏览器是否已关闭": browser_was_closed(browser_runtime),
+                "已完成用例": completed_cases,
+                "已完成数量": len(completed_cases),
+                "失败平台": sorted(errors),
+            },
+        )
+        if errors or browser_was_closed(browser_runtime):
+            if browser_was_closed(browser_runtime) and "__browser__" not in errors:
+                errors["__browser__"] = [{
+                    "case_id": "__browser_closed__",
+                    "title": "测试浏览器已关闭",
+                    "traceback": "Browser was closed during test execution. Remaining cases were stopped.",
+                }]
             attach_json("platform parallel failures", errors)
             pytest.fail(format_platform_failures(errors))
 
@@ -147,9 +165,10 @@ def run_platform_cases(
     browser_runtime,
     findai_runtime_context,
     collect_creation_barrier: threading.Barrier | None = None,
+    execution_state: dict[str, Any] | None = None,
 ):
     if platform in COLLECT_TASK_PLATFORMS:
-        return run_collect_platform_cases(platform, cases, browser_runtime, findai_runtime_context, collect_creation_barrier)
+        return run_collect_platform_cases(platform, cases, browser_runtime, findai_runtime_context, collect_creation_barrier, execution_state)
 
     case_state = {"variables": {}, "results": {}}
     thread_api = create_thread_find_task_api(browser_runtime)
@@ -157,10 +176,14 @@ def run_platform_cases(
     with allure.step(f"{platform} 平台串行执行 {len(cases)} 条用例"):
         for case_data in cases:
             with allure.step(f"{case_data['id']} {case_data['title']}"):
+                if browser_was_closed(browser_runtime):
+                    errors.append(browser_closed_case_error(case_data))  # 用户关闭浏览器后不再创建后续任务。
+                    break
                 print(f"[{platform}] start {case_data['id']} {case_data['title']}")
                 case_state["_result_assertion_phase"] = False
                 try:
                     execute_find_task_case(case_data, thread_api, findai_runtime_context, case_state)
+                    record_completed_case(execution_state, case_data)  # 已完成用例立即写入会话汇总，后续浏览器关闭也不丢失。
                     print(f"[{platform}] passed {case_data['id']}")
                 except BaseException as error:
                     if isinstance(error, (KeyboardInterrupt, SystemExit)):
@@ -189,6 +212,7 @@ def run_collect_platform_cases(
     browser_runtime,
     findai_runtime_context,
     collect_creation_barrier: threading.Barrier | None,
+    execution_state: dict[str, Any] | None,
 ):
     """先并发创建全部采集任务，再统一查询状态和执行断言。"""
     errors = []
@@ -236,6 +260,7 @@ def run_collect_platform_cases(
                 case_data = created_case["case_data"]
                 try:
                     future.result()
+                    record_completed_case(execution_state, case_data)  # 采集用例完成校验后写入会话汇总。
                     print(f"[{platform}] passed {case_data['id']}")
                 except BaseException as error:
                     if isinstance(error, (KeyboardInterrupt, SystemExit)):
@@ -253,6 +278,30 @@ def make_case_error(case_data: dict[str, Any], error: BaseException) -> dict[str
         "title": case_data["title"],
         "traceback": "".join(traceback.format_exception(type(error), error, error.__traceback__)),
     }
+
+
+def browser_was_closed(browser_runtime) -> bool:
+    """安全读取浏览器关闭事件，避免异常中断时继续调度新任务。"""
+    browser_closed_event = browser_runtime.get("browser_closed_event")  # 获取 session fixture 暴露的浏览器关闭事件。
+    return bool(browser_closed_event and browser_closed_event.is_set())  # 事件已设置表示用户手动关闭了测试浏览器。
+
+
+def browser_closed_case_error(case_data: dict[str, Any]) -> dict[str, str]:
+    """生成浏览器关闭导致当前用例未执行的标准失败记录。"""
+    return {
+        "case_id": case_data["id"],
+        "title": case_data["title"],
+        "traceback": "Browser was closed during test execution. Remaining cases were stopped.",
+    }
+
+
+def record_completed_case(execution_state: dict[str, Any] | None, case_data: dict[str, Any]) -> None:
+    """线程安全地记录已通过用例，供中断后的 Allure 汇总展示。"""
+    if not execution_state:
+        return  # 非平台并行模式没有会话汇总对象时无需记录。
+    record = {"用例ID": case_data["id"], "用例标题": case_data["title"], "平台": case_data["platform"], "结果": "通过"}  # 只保存报告需要的非敏感摘要。
+    with execution_state["lock"]:
+        execution_state["completed_cases"].append(record)  # 用锁避免不同平台线程同时追加导致摘要顺序损坏。
 
 
 def create_collect_task_case(case_data: dict[str, Any], browser_runtime) -> dict[str, Any]:
