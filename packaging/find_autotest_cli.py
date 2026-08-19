@@ -76,8 +76,8 @@ def validate_test_prerequisites(platforms: list[str]) -> None:
     extension_dir = external_extension_dir()
     if not has_unpacked_extension(extension_dir):
         raise RuntimeError(
-            "FindAI Chrome extension is not unpacked. Extract the plugin package into "
-            f"{extension_dir} so that extension/manifest.json exists."
+            "未发现解压后的 FindAI 插件。请将插件安装包解压到："
+            f"{extension_dir}，并确保该目录或其一级子目录中包含 manifest.json。"
         )
 
     collect_platforms = {"xhs", "dy"}

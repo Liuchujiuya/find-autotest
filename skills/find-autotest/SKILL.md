@@ -42,7 +42,7 @@ find-autotest config --pgy-username "..." --pgy-password "..." --xt-username "..
 
 Only update fields that the user explicitly provides. Never print passwords. If an account is not configured, do not attempt to auto-fill its login form; leave the opened platform or plugin login page for the user to complete manually.
 
-Before running any live test, check that the FindAI Chrome extension package has been unpacked into `extension/` and that an `extension/manifest.json` file exists. If not, stop and ask the user to unpack the plugin installation package into that folder.
+Before running any live test, check that the FindAI Chrome extension package has been unpacked into `%USERPROFILE%\.find-autotest\extension` and that this directory or one of its direct child directories contains `manifest.json`. If not, stop and tell the user the full `%USERPROFILE%\.find-autotest\extension` path.
 
 Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
 
