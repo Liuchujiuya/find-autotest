@@ -30,6 +30,8 @@ def launch_chromium_with_extension(
         no_viewport=True,  # 不使用 Playwright 默认固定视口，让浏览器窗口真实最大化后页面也占满窗口。
         args=[
             "--start-maximized",  # 启动 Chromium 时最大化窗口，方便用户观察自动登录过程。
+            "--disable-save-password-bubble",  # 禁止浏览器弹出保存密码提示，避免把用户手动输入的账号保存到测试会话。
+            "--disable-features=PasswordManagerOnboarding,PasswordManagerEnableAutosignin,AutofillServerCommunication",  # 关闭密码管理器自动登录和云端自动填充，确保未配置账号时不自动写入表单。
             f"--disable-extensions-except={extension_path}",  # 仅启用当前待测插件，减少其它扩展干扰。
             f"--load-extension={extension_path}",  # 加载解压后的 findai 插件目录。
         ],

@@ -42,6 +42,8 @@ find-autotest config --pgy-username "..." --pgy-password "..." --xt-username "..
 
 Only update fields that the user explicitly provides. Never print passwords. If an account is not configured, do not attempt to auto-fill its login form; leave the opened platform or plugin login page for the user to complete manually.
 
+小红书和抖音始终使用用户手动扫码登录，不读取或填写平台账号密码。蒲公英和星图仅在用户明确配置了用户名和密码后才自动登录；新安装或账号为空时只打开登录页并等待用户手动完成登录。
+
 Before running any live test, check that the FindAI Chrome extension package has been unpacked into `%USERPROFILE%\.find-autotest\extension` and that this directory or one of its direct child directories contains `manifest.json`. If not, stop and tell the user the full `%USERPROFILE%\.find-autotest\extension` path.
 
 Before running `xhs` or `dy`, check the corresponding API key in `login_info.yaml`. If it is absent, stop and ask the user for the shared collect API key; update both platform keys with `--collect-api-key` before running the test.
